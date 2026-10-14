@@ -12,3 +12,7 @@ C:\Users\Martin\Filer\Arbete och utbildning\SYS26D - Medieinstitutet\Kurser\2_c-
 C:\Users\Martin\Filer\Arbete och utbildning\SYS26D - Medieinstitutet\Kurser\2_c-sharp\projects\Blackjack\Blackjack\obj\Debug\net10.0\Blackjack.pdb
 C:\Users\Martin\Filer\Arbete och utbildning\SYS26D - Medieinstitutet\Kurser\2_c-sharp\projects\Blackjack\Blackjack\obj\Debug\net10.0\Blackjack.genruntimeconfig.cache
 C:\Users\Martin\Filer\Arbete och utbildning\SYS26D - Medieinstitutet\Kurser\2_c-sharp\projects\Blackjack\Blackjack\obj\Debug\net10.0\ref\Blackjack.dll
+C:\Users\Martin\Filer\Arbete och utbildning\SYS26D - Medieinstitutet\Kurser\2_c-sharp\projects\Blackjack\Blackjack\bin\Debug\net10.0\Spectre.Console.dll
+C:\Users\Martin\Filer\Arbete och utbildning\SYS26D - Medieinstitutet\Kurser\2_c-sharp\projects\Blackjack\Blackjack\bin\Debug\net10.0\Spectre.Console.Ansi.dll
+C:\Users\Martin\Filer\Arbete och utbildning\SYS26D - Medieinstitutet\Kurser\2_c-sharp\projects\Blackjack\Blackjack\obj\Debug\net10.0\Blackjack.csproj.AssemblyReference.cache
+C:\Users\Martin\Filer\Arbete och utbildning\SYS26D - Medieinstitutet\Kurser\2_c-sharp\projects\Blackjack\Blackjack\obj\Debug\net10.0\Blackjack.csproj.Up2Date

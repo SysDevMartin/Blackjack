@@ -1,24 +1,29 @@
-﻿namespace Blackjack;
+﻿using Spectre.Console;
+
+namespace Blackjack;
 
 class Program
 {
     private const int TargetCardSum = 21;
     private const int StartingCardCount = 2;
     
-    private static Random RandomNumberGenerator = new();
+    //private static Random RandomNumberGenerator = new();
     private static List<int> CurrentCards = new();
-    private static bool IsGameActive = true;
+    public static bool IsGameActive = true;
     
     static void Main(string[] args)
     {
-        int GetRandomCard()
+        Dealer dealer = new();
+        Player player = new();
+        
+        /*int GetRandomCard()
         {
             var minNumber = 1;
             var maxNumber = 10;
             return RandomNumberGenerator.Next(minNumber, maxNumber + 1);
-        }
+        }*/
 
-        void DrawCard()
+        /*void DrawCard()
         {
             var newCard = GetRandomCard();
             CurrentCards.Add(newCard);
@@ -30,7 +35,7 @@ class Program
                 Console.WriteLine($"You went over {TargetCardSum} with your total sum of {currentCardSum} and lost the game!");
                 IsGameActive = false;
             }
-        }
+        }*/
 
         void Stand()
         {
@@ -57,7 +62,7 @@ class Program
             }
         }
 
-        void PromptInput()
+        /*void PromptInput()
         {
             while (true)
             {
@@ -85,32 +90,47 @@ class Program
 
                 break;
             }
-        }
+        }*/
 
-        void ShowCards()
+        void PromptSelection()
         {
-            Console.WriteLine("----------");
-            var cardString = "";
-            foreach (var card in CurrentCards)
+            var selectedMenuItem = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("What's your choice?")
+                    .AddChoices("Hit", "Stand", "End Game"));
+            
+            switch (selectedMenuItem)
             {
-                cardString += $"[{card}] ";
+                case "Hit":
+                    Console.WriteLine("You chose to draw a card.");
+                    dealer.DealCardToPlayer(player);
+                    //ShowCards();
+                    player.DisplayHand();
+                    break;
+                case "Stand":
+                    Console.WriteLine("You chose to stand.");
+                    Stand();
+                    break;
+                case "End Game":
+                    QuitGame();
+                    break;
             }
-            Console.WriteLine(cardString.Trim());
-            Console.WriteLine("----------");
         }
         
-        Console.WriteLine("--- BLACK JACK ---");
+        var gamePanel = new Panel("BLACKJACK");
+        AnsiConsole.Write(gamePanel);
         
         // Draw a starting hand.
         for (int i = 0; i < StartingCardCount; i++)
         {
-            DrawCard();
+            dealer.DealCardToPlayer(player);
         }
-        ShowCards();
+        player.DisplayHand();
         
         while (IsGameActive)
         {
-            PromptInput();
+            //PromptInput();
+            PromptSelection();
         }
         
         Console.WriteLine("----------");
