@@ -46,14 +46,18 @@ public class Player
             cardPanels.Add(cardPanel);
         }
         grid.AddRow(cardPanels.ToArray());
+
+        var nameText = IsStanding ? "STANDING" : "YOU";
+        var panelColor = IsStanding ? Color.LightCyan1 : Color.CornflowerBlue;
+        var headerText = $"{nameText} [{CurrentCards.Sum()}]";
+        var escapedHeaderMarkup = Markup.Escape(headerText);
         
-        var escapedHeaderMarkup = Markup.Escape($"YOU [{CurrentCards.Sum()}]");
         var panel = new Panel(grid)
             {
                 Width = Program.Settings.GamePanelWidth
             }
             .Header(escapedHeaderMarkup)
-            .BorderColor(Color.CornflowerBlue);
+            .BorderColor(panelColor);
         
         AnsiConsole.Write(panel);
     }
@@ -66,9 +70,9 @@ public class Player
         {
             "[bold][chartreuse3]Hit[/][/] [dim]- Get a card from the dealer.[/]",
             "[bold][gold3_1]Stand[/][/] [dim]- Stay at current card sum.[/]",
-            "[bold][red]Quit Game[/][/]"
+            "[bold][red]Quit[/][/]"
         };
-            
+        
         var selectedMenuItem = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("[bold]Your turn. What's your decision?[/]")
@@ -80,26 +84,10 @@ public class Player
                 return Choice.Hit;
             case "[bold][gold3_1]Stand[/][/] [dim]- Stay at current card sum.[/]":
                 return Choice.Stand;
-            case "[bold][red]Quit Game[/][/]":
+            case "[bold][red]Quit[/][/]":
                 return Choice.EndGame;
         }
 
         return Choice.None;
     }
-    
-    /*public bool Stand()
-    {
-        IsStanding = true;
-        var currentCardSum = CurrentCards.Sum();
-        if (currentCardSum == Program.Settings.TargetCardSum)
-        {
-            Console.WriteLine("You won!");
-            return true;
-        }
-        else
-        {
-            Console.WriteLine($"You lost! Your total card sum of {currentCardSum} didn't match the target card sum of {Program.Settings.TargetCardSum}.");
-            return false;
-        }
-    }*/
 }

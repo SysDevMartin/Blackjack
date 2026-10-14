@@ -206,15 +206,17 @@ public class Dealer
         grid.AddRow(cardPanels.ToArray());
         
         var dealerPhrase = Program.CurrentTurn == Program.Turn.Player ? GetRandomPhrase() : "Thinking...";
-        var dealerHeaderText = revealCards ? $"DEALER [{CurrentCards.Sum()}]" : $"DEALER - {dealerPhrase}";
+        var nameText = IsStanding ? "STANDING" : "DEALER";
+        var panelColor = IsStanding ? Color.Yellow1 : Color.DarkOrange;
+        var headerText = revealCards ? $"{nameText} [{CurrentCards.Sum()}]" : $"{nameText} - {dealerPhrase}";
+        var escapedHeaderMarkup = Markup.Escape(headerText);
         
-        var escapedHeaderMarkup = Markup.Escape(dealerHeaderText);
         var panel = new Panel(grid)
             {
                 Width = Program.Settings.GamePanelWidth
             }
             .Header(escapedHeaderMarkup)
-            .BorderColor(Color.DarkOrange);
+            .BorderColor(panelColor);
         
         AnsiConsole.Write(panel);
     }

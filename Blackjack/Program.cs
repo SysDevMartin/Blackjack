@@ -128,7 +128,7 @@ class Program
             string[] availableChoices =
             {
                 "[bold][chartreuse3]Play Again[/][/]",
-                "[bold][red]Quit Game[/][/]"
+                "[bold][red]Quit[/][/]"
             };
             
             var selectedMenuItem = AnsiConsole.Prompt(
@@ -140,7 +140,7 @@ class Program
             {
                 case "[bold][chartreuse3]Play Again[/][/]":
                     return MenuChoice.PlayAgain;
-                case "[bold][red]Quit Game[/][/]":
+                case "[bold][red]Quit[/][/]":
                     return MenuChoice.QuitGame;
             }
 
