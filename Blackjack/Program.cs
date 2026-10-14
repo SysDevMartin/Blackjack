@@ -1,18 +1,33 @@
-﻿using System.IO.Compression;
-using Spectre.Console;
+﻿using Spectre.Console;
 
 namespace Blackjack;
 
 class Program
 {
-    public static bool IsGameActive = true;
-    public static bool DoQuitGame = false;
+    public static GameState CurrentGameState;
+    public static Turn CurrentTurn;
     
     public struct Settings
     {
         public static int GamePanelWidth { get; } = 75;
         public static int TargetCardSum { get; } = 21;
         public static int StartingCardCount { get; } = 2;
+        public static int MaxCardCount { get; } = 10;
+        public static int MinCardValue { get; } = 1;
+        public static int MaxCardValue { get; } = 10;
+    }
+    
+    public enum GameState
+    {
+        Play,
+        Stand,
+        Quit
+    }
+
+    public enum Turn
+    {
+        Player,
+        Dealer
     }
     
     private enum MenuChoice
@@ -26,32 +41,93 @@ class Program
     {
         Dealer dealer = new();
         Player player = new();
+        var randomNumberGenerator = new Random();
+        
+        void InitializeGame()
+        {
+            CurrentGameState = GameState.Play;
+            CurrentTurn = Turn.Player;
+
+            dealer.Reset();
+            player.Reset();
+        
+            // Deal a starting hand to the dealer.
+            for (int i = 0; i < Settings.StartingCardCount; i++)
+            {
+                dealer.DealCardToSelf();
+            }
+        
+            // Deal a starting hand to the player.
+            for (int i = 0; i < Settings.StartingCardCount; i++)
+            {
+                dealer.DealCardToPlayer(player);
+            }
+        }
         
         void EndGame()
         {
             AnsiConsole.WriteLine("");
-            if (AnsiConsole.Confirm("End the current game? All progress will be lost."))
+            if (AnsiConsole.Confirm("Quit game? All progress will be lost."))
             {
-                IsGameActive = false;
-                DoQuitGame = false;
+                CurrentGameState = GameState.Quit;
             }
         }
 
         void DisplayGameTitlePanel()
         {
-            var figlet = new FigletText("BLACKJACK").Color(Color.Green);
+            var figlet = new FigletText("BLACKJACK").Color(Color.DarkSeaGreen4_1);
             AnsiConsole.Write(figlet);
-            
-            AnsiConsole.MarkupLine("[dim]Get the sum of your cards as close as possible to [bold]21[/] without going over.[/]\n");
+            AnsiConsole.MarkupLine("  [darkseagreen4]Get the sum of your cards as close as possible to [bold]21[/] without going over.[/]\n");
+        }
+
+        void PerformPlayerTurn(ref string gameMessageMarkupText)
+        {
+            var playerChoice = player.PromptChoice();
+            switch (playerChoice)
+            {
+                case Player.Choice.Hit:
+                    if (player.CurrentCards.Count < Settings.MaxCardCount)
+                    {
+                        player.IsStanding = false;
+                        dealer.DealCardToPlayer(player);
+                        CurrentTurn = Turn.Dealer;
+                    }
+                    else
+                    {
+                        gameMessageMarkupText = "[red]You cannot ask for more cards. You have reached the limit.[/]";
+                    }
+                    break;
+                case Player.Choice.Stand:
+                    player.IsStanding = true;
+                    CurrentTurn = Turn.Dealer;
+                    break;
+                case Player.Choice.EndGame:
+                    EndGame();
+                    break;
+            }
+        }
+
+        void PerformDealerTurn()
+        {
+            AnsiConsole.Status()
+                .Start("\nDealer's turn. Making a decision...", ctx =>
+                {
+                    var minRandomSleepTime = 3000;
+                    var maxRandomSleepTime = 5000;
+                    var randomSleepTime = randomNumberGenerator.Next(minRandomSleepTime, maxRandomSleepTime + 1);
+                    Thread.Sleep(randomSleepTime);
+                    dealer.MakeTurnDecision();
+                    CurrentTurn = Turn.Player;
+                });
         }
         
         MenuChoice PromptMenuChoice()
         {
             AnsiConsole.WriteLine("");
-        
+            
             string[] availableChoices =
             {
-                "[bold][green]Play Again[/][/]",
+                "[bold][chartreuse3]Play Again[/][/]",
                 "[bold][red]Quit Game[/][/]"
             };
             
@@ -62,7 +138,7 @@ class Program
             
             switch (selectedMenuItem)
             {
-                case "[bold][green]Play Again[/][/]":
+                case "[bold][chartreuse3]Play Again[/][/]":
                     return MenuChoice.PlayAgain;
                 case "[bold][red]Quit Game[/][/]":
                     return MenuChoice.QuitGame;
@@ -71,49 +147,112 @@ class Program
             return MenuChoice.None;
         }
         
-        // Deal a starting hand to the dealer.
-        for (int i = 0; i < Settings.StartingCardCount; i++)
-        {
-            dealer.DealCardToSelf();
-        }
+        InitializeGame();
+
+        var gameMessageMarkupText = "";
         
-        // Deal a starting hand to the player.
-        for (int i = 0; i < Settings.StartingCardCount; i++)
+        while (CurrentGameState != GameState.Quit)
         {
-            dealer.DealCardToPlayer(player);
-        }
-        
-        while (IsGameActive)
-        {
+            var revealDealerCards = player.IsStanding && dealer.IsStanding;
             AnsiConsole.Clear();
             DisplayGameTitlePanel();
-            dealer.DisplayPanel();
+            dealer.DisplayPanel(revealDealerCards);
             player.DisplayPanel();
             
-            var playerChoice = player.PromptChoice();
-            switch (playerChoice)
+            if (gameMessageMarkupText.Length > 0)
             {
-                case Player.Choice.Hit:
-                    dealer.DealCardToPlayer(player);
-                    break;
-                case Player.Choice.Stand:
-                    // Do nothing.
-                    break;
-                case Player.Choice.EndGame:
-                    EndGame();
-                    break;
+                AnsiConsole.MarkupLine(gameMessageMarkupText);
+                gameMessageMarkupText = "";
             }
-        }
 
-        if (!DoQuitGame)
-        {
-            var menuChoice = PromptMenuChoice();
-            switch (menuChoice)
+            if (player.IsStanding && dealer.IsStanding)
             {
-                case MenuChoice.PlayAgain:
+                // Both the player and the dealer are standing.
+                CurrentGameState = GameState.Stand;
+                var playerCardSum = player.CurrentCards.Sum();
+                var dealerCardSum = dealer.CurrentCards.Sum();
+                var playerDealerSumDifference = playerCardSum - dealerCardSum;
+                var isPlayerOverTargetSum = playerCardSum > Settings.TargetCardSum;
+                var isDealerOverTargetSum = dealerCardSum > Settings.TargetCardSum;
+                var playerWins = false;
+                var dealerWins = false;
+                
+                AnsiConsole.WriteLine("");
+                
+                if (playerDealerSumDifference == 0)
+                {
+                    playerWins = false;
+                    dealerWins = false;
+                }
+                else if (isPlayerOverTargetSum && isDealerOverTargetSum)
+                {
+                    if (playerCardSum < dealerCardSum)
+                    {
+                        playerWins = true;
+                    }
+                    else
+                    {
+                        dealerWins = true;
+                    }
+                }
+                else if (isDealerOverTargetSum && !isPlayerOverTargetSum)
+                {
+                    playerWins = true;
+                }
+                else if (isPlayerOverTargetSum && !isDealerOverTargetSum)
+                {
+                    dealerWins = true;
+                }
+                else if (playerDealerSumDifference > 0)
+                {
+                    playerWins = true;
+                }
+                else
+                {
+                    dealerWins = true;
+                }
+                
+                if (playerWins)
+                {
+                    AnsiConsole.MarkupLine("[bold][green]Player wins![/][/]");
+                }
+                else if (dealerWins)
+                {
+                    AnsiConsole.MarkupLine("[bold][red]Dealer wins![/][/]");
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine("[bold][yellow]Draw![/][/]");
+                }
+                
+                AnsiConsole.MarkupLine($"[darkgoldenrod]Player has [bold]{playerCardSum}[/] and dealer has [bold]{dealerCardSum}[/][/].");
+            }
+
+            // Active game.
+            switch (CurrentGameState)
+            {
+                case GameState.Play:
+                    switch (CurrentTurn)
+                    {
+                        case Turn.Player:
+                            PerformPlayerTurn(ref gameMessageMarkupText);
+                            break;
+                        case Turn.Dealer:
+                            PerformDealerTurn();
+                            break;
+                    }
                     break;
-                case MenuChoice.QuitGame:
-                    DoQuitGame = true;
+                case GameState.Stand:
+                    var menuChoice = PromptMenuChoice();
+                    switch (menuChoice)
+                    {
+                        case MenuChoice.PlayAgain:
+                            InitializeGame();
+                            break;
+                        case MenuChoice.QuitGame:
+                            CurrentGameState = GameState.Quit;
+                            break;
+                    }
                     break;
             }
         }

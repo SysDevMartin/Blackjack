@@ -1,10 +1,12 @@
 ﻿using Spectre.Console;
+using Spectre.Console.Rendering;
 
 namespace Blackjack;
 
 public class Player
 {
     public readonly List<int> CurrentCards = [];
+    public bool IsStanding { get; set; }
 
     public enum Choice
     {
@@ -12,6 +14,17 @@ public class Player
         Stand,
         EndGame,
         None
+    }
+
+    public Player()
+    {
+        Reset();
+    }
+
+    public void Reset()
+    {
+        IsStanding = false;
+        CurrentCards.Clear();
     }
 
     private void GetCardOutput(int number)
@@ -23,26 +36,26 @@ public class Player
     {
         AnsiConsole.WriteLine("");
         
-        var panelContent = "";
+        var grid = new Grid();
+        grid.AddColumns(CurrentCards.Count);
+        List<Panel> cardPanels = new();
         foreach (var card in CurrentCards)
         {
-            panelContent += $"[{card}] ";
+            var cardText = $"[bold][lightskyblue1]{card.ToString()}[/][/]";
+            var cardPanel = new Panel(cardText).BorderColor(Color.DeepSkyBlue1);
+            cardPanels.Add(cardPanel);
         }
-
-        var escapedMarkup = Markup.Escape(panelContent);
-        var markup = new Markup(escapedMarkup);
-        var panel = new Panel(markup)
-        {
-            Width = Program.Settings.GamePanelWidth
-        }
-        .Header("YOU")
-        .BorderColor(Color.CornflowerBlue);
+        grid.AddRow(cardPanels.ToArray());
+        
+        var escapedHeaderMarkup = Markup.Escape($"YOU [{CurrentCards.Sum()}]");
+        var panel = new Panel(grid)
+            {
+                Width = Program.Settings.GamePanelWidth
+            }
+            .Header(escapedHeaderMarkup)
+            .BorderColor(Color.CornflowerBlue);
         
         AnsiConsole.Write(panel);
-
-        /*var grid = new Grid();
-        grid.AddColumn(new GridColumn { Width = 1 });
-        grid.AddColumn(new GridColumn { Width = 1 });*/
     }
     
     public Choice PromptChoice()
@@ -51,41 +64,42 @@ public class Player
         
         string[] availableChoices =
         {
-            "[bold][green]Hit[/][/] [dim]- Get a card from the dealer.[/]",
-            "[bold][yellow]Stand[/][/] [dim]- Stay at current card sum.[/]",
-            "[bold][red]End Game[/][/]"
+            "[bold][chartreuse3]Hit[/][/] [dim]- Get a card from the dealer.[/]",
+            "[bold][gold3_1]Stand[/][/] [dim]- Stay at current card sum.[/]",
+            "[bold][red]Quit Game[/][/]"
         };
             
         var selectedMenuItem = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-                .Title("[bold]Your turn. What's your choice?[/]")
+                .Title("[bold]Your turn. What's your decision?[/]")
                 .AddChoices(availableChoices));
             
         switch (selectedMenuItem)
         {
-            case "[bold][green]Hit[/][/] [dim]- Get a card from the dealer.[/]":
+            case "[bold][chartreuse3]Hit[/][/] [dim]- Get a card from the dealer.[/]":
                 return Choice.Hit;
-            case "[bold][yellow]Stand[/][/] [dim]- Stay at current card sum.[/]":
-                Stand();
+            case "[bold][gold3_1]Stand[/][/] [dim]- Stay at current card sum.[/]":
                 return Choice.Stand;
-            case "[bold][red]End Game[/][/]":
+            case "[bold][red]Quit Game[/][/]":
                 return Choice.EndGame;
         }
 
         return Choice.None;
     }
     
-    public void Stand()
+    /*public bool Stand()
     {
+        IsStanding = true;
         var currentCardSum = CurrentCards.Sum();
-        if (CurrentCards.Sum() == Program.Settings.TargetCardSum)
+        if (currentCardSum == Program.Settings.TargetCardSum)
         {
             Console.WriteLine("You won!");
+            return true;
         }
         else
         {
             Console.WriteLine($"You lost! Your total card sum of {currentCardSum} didn't match the target card sum of {Program.Settings.TargetCardSum}.");
+            return false;
         }
-        Program.IsGameActive = false;
-    }
+    }*/
 }

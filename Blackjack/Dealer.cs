@@ -5,14 +5,27 @@ namespace Blackjack;
 public class Dealer
 {
     public readonly List<int> CurrentCards = [];
-    
-    private Random RandomNumberGenerator = new();
+    public bool IsStanding { get; set; }
+    private readonly Random RandomNumberGenerator = new();
+    private const int MinCardSumToStand = 17;
+
+    public Dealer()
+    {
+        Reset();
+    }
+
+    public void Reset()
+    {
+        IsStanding = false;
+        CurrentCards.Clear();
+    }
     
     private int GetRandomCard()
     {
-        var minNumber = 1;
-        var maxNumber = 10;
-        return RandomNumberGenerator.Next(minNumber, maxNumber + 1);
+        return RandomNumberGenerator.Next(
+            Program.Settings.MinCardValue,
+            Program.Settings.MaxCardValue + 1
+        );
     }
 
     public string GetRandomPhrase()
@@ -20,55 +33,156 @@ public class Dealer
         string[] availablePhrases =
         {
             "What's the move?",
-            "Your call, boss.",
+            "Your call.",
             "Hit or stand?",
-            "Time to make a choice.",
-            "What are we thinking here?",
-            "Feeling brave or playing it safe?",
-            "The cards await your decision.",
+            "Think carefully now.",
+            "What are you feeling?",
             "Trust your instincts.",
-            "What's the strategy?",
-            "Think this one through.",
-            "The next move is yours.",
-            "Careful now, this one's interesting.",
-            "Will you risk it?",
-            "Stand proud or hit hard?",
-            "What's the game plan?",
-            "Let's see that poker face work.",
-            "Go with your gut.",
+            "Your turn to decide.",
+            "What's the plan?",
             "Feeling lucky?",
-            "What's your play?",
-            "No pressure. Well, a little pressure.",
             "Choose wisely.",
-            "Do you like those odds?",
-            "The table is watching.",
-            "Big decision coming up.",
-            "One card can change everything.",
-            "What's it gonna be?",
-            "Fortune favors the bold. Sometimes.",
-            "Do you want another card?",
-            "How much do you trust this hand?",
-            "Your move, card shark.",
-            "I can wait. The cards can't.",
-            "You've got options.",
-            "Don't overthink it. Or do.",
-            "Let's hear the verdict.",
-            "Hit me with your decision.",
-            "Stand and fight or roll the dice?",
-            "The suspense is unbearable.",
-            "What's your next move, hotshot?",
-            "This hand has potential.",
+            "Let's hear it.",
+            "What'll it be?",
+            "The next move is yours.",
+            "Go with your gut.",
+            "How brave are we today?",
+            "This one's on you.",
+            "Ready to commit?",
+            "What's the strategy?",
+            "Take your best shot.",
+            "No pressure.",
+            "A decision must be made.",
+            "The cards are waiting.",
+            "What's your play?",
+            "Stand proud or push your luck?",
+            "Big moment.",
+            "Don't overthink it. Or maybe do.",
+            "The suspense is real.",
+            "What are we doing here?",
             "Feeling confident?",
-            "You've come this far.",
-            "Do you tempt fate?",
-            "The cards are listening.",
+            "You've got options.",
+            "Another card maybe?",
+            "Happy with what you've got?",
+            "How much do you trust that hand?",
+            "Risk it or keep it?",
+            "Let's see some courage.",
+            "A bold choice could pay off. Or cost you everything.",
+            "No guts, no glory.",
+            "What's the verdict?",
+            "Time to make your move.",
+            "The table believes in you. Mostly.",
+            "Trust the process.",
+            "Feeling dangerous?",
+            "One choice changes everything.",
+            "Don't let the cards intimidate you.",
+            "What's the game plan, chief?",
+            "You know something I don't?",
+            "I hope you have a strategy.",
+            "Winging it again?",
+            "This could get interesting.",
+            "How lucky do you feel right now?",
+            "The next card could be beautiful. Or absolutely devastating.",
             "Make it count.",
-            "What's the play of the day?",
-            "I'm curious where this is going.",
-            "A risky move could pay off.",
-            "All eyes on you.",
-            "This could be genius.",
-            "Or this could be a disaster."
+            "What does your gut say?",
+            "What's fate looking like today?",
+            "You've come too far to hesitate.",
+            "Take your time.",
+            "Not too much time.",
+            "What's cooking?",
+            "This hand has potential. Or potential problems.",
+            "Care to tempt fate?",
+            "Ready to roll the dice?",
+            "Metaphorically speaking, of course.",
+            "What's your secret plan?",
+            "I can feel a questionable decision coming.",
+            "Thinking hard over there?",
+            "Boldness is rewarded.",
+            "Sometimes.",
+            "What's the smart move?",
+            "What's the fun move?",
+            "Those aren't always the same thing.",
+            "Do you believe in destiny?",
+            "This is where legends are made. Or cautionary tales.",
+            "Feeling brave enough for another card?",
+            "Happy to stay where you are?",
+            "Don't let me influence you.",
+            "I'm just the dealer.",
+            "You're driving this bus.",
+            "Hopefully with a license.",
+            "Take a chance.",
+            "Play it safe. Or surprise us all.",
+            "The cards have done their part.",
+            "Now it's your turn.",
+            "What's the winning move?",
+            "Can you read the table?",
+            "Your face says one thing.",
+            "Risk versus reward.",
+            "The eternal struggle.",
+            "Let's make some history. Or at least finish this hand.",
+            "What's it going to be, card shark?",
+            "You feeling lucky, punk?",
+            "This hand isn't getting any younger.",
+            "A choice stands before you.",
+            "Need another card?",
+            "Sticking with that hand?",
+            "One more card won't hurt... probably.",
+            "You standing on that?",
+            "Feeling good enough to stay?",
+            "Want to take another shot?",
+            "This is where things get interesting.",
+            "Another card or are you done?",
+            "Happy with what you've got?",
+            "Are we pushing our luck today?",
+            "Stand firm or chase greatness?",
+            "One card away from glory. Or disaster.",
+            "Feeling brave enough to hit?",
+            "Think you've got enough?",
+            "Care for another?",
+            "Trust that hand?",
+            "Do you dare hit?",
+            "Playing it safe?",
+            "You sure you want to stop there?",
+            "That's your final answer?",
+            "Looking for something bigger?",
+            "It's all or nothing now.",
+            "Go big or go bust.",
+            "Will the next card save the day?",
+            "Want to see one more?",
+            "Last chance to change your fate.",
+            "Feeling lucky enough to hit?",
+            "Is that hand speaking to you?",
+            "Can you resist another card?",
+            "Bold players hit.",
+            "Smart players stand.",
+            "The best players know the difference.",
+            "What's it gonna be?",
+            "Another card could change everything.",
+            "Standing already?",
+            "Not tempted by one more card?",
+            "This hand isn't over yet.",
+            "Are we done here?",
+            "The next card has your name on it. Or maybe it doesn't.",
+            "Stand and hope?",
+            "Hit and pray?",
+            "What's your level of confidence right now?",
+            "Ready to test your luck?",
+            "The cards are calling.",
+            "Just one more card...",
+            "Hit me with your decision.",
+            "Let's find out what you're made of.",
+            "Need a card?",
+            "One more?",
+            "Stand pat?",
+            "Risk it?",
+            "Push your luck?",
+            "Going again?",
+            "Stay or play?",
+            "Hit me?",
+            "That's enough?",
+            "Taking a chance?",
+            "What's the call?",
+            "Another round?"
         };
         
         var randomIndex = RandomNumberGenerator.Next(availablePhrases.Length);
@@ -77,30 +191,31 @@ public class Dealer
 
     public void DisplayPanel(bool revealCards = false)
     {
-        //var panelContent = $"Dealer says: {GetRandomPhrase()}\n";
-        var panelContent = "";
-        foreach (var card in CurrentCards)
-        {
-            if (revealCards)
-            {
-                panelContent += $"[{card}] ";
-            }
-            else
-            {
-                panelContent += "[?] ";
-            }
-        }
-
         AnsiConsole.WriteLine("");
         
-        var escapedMarkup = Markup.Escape(panelContent);
-        var markup = new Markup(escapedMarkup);
-        var panel = new Panel(markup)
+        var grid = new Grid();
+        grid.AddColumns(CurrentCards.Count);
+        List<Panel> cardPanels = new();
+        foreach (var card in CurrentCards)
+        {
+            var cardText = revealCards ? $"[bold][lightgoldenrod3]{card.ToString()}[/][/]" : "[bold][lightgoldenrod3]?[/][/]";
+            var cardPanel = new Panel(cardText).BorderColor(Color.LightSalmon1);
+            
+            cardPanels.Add(cardPanel);
+        }
+        grid.AddRow(cardPanels.ToArray());
+        
+        var dealerPhrase = Program.CurrentTurn == Program.Turn.Player ? GetRandomPhrase() : "Thinking...";
+        var dealerHeaderText = revealCards ? $"DEALER [{CurrentCards.Sum()}]" : $"DEALER - {dealerPhrase}";
+        
+        var escapedHeaderMarkup = Markup.Escape(dealerHeaderText);
+        var panel = new Panel(grid)
             {
                 Width = Program.Settings.GamePanelWidth
             }
-            .Header("DEALER")
+            .Header(escapedHeaderMarkup)
             .BorderColor(Color.DarkOrange);
+        
         AnsiConsole.Write(panel);
     }
     
@@ -108,25 +223,42 @@ public class Dealer
     {
         var newCard = GetRandomCard();
         player.CurrentCards.Add(newCard);
-            
-        var currentCardSum = player.CurrentCards.Sum();
-        if (currentCardSum > Program.Settings.TargetCardSum)
-        {
-            Console.WriteLine($"Card sum: {player.CurrentCards.Sum()}");
-            Console.WriteLine($"You lost with a card sum of {currentCardSum}!");
-            Program.IsGameActive = false;
-        }
     }
 
     public void DealCardToSelf()
     {
         var newCard = GetRandomCard();
         CurrentCards.Add(newCard);
-        
-        var currentCardSum = CurrentCards.Sum();
-        if (currentCardSum > Program.Settings.TargetCardSum)
+    }
+
+    public void MakeTurnDecision()
+    {
+        var cardSum = CurrentCards.Sum();
+        if (cardSum < MinCardSumToStand)
         {
-            Console.WriteLine($"Dealer lost with a card sum of {currentCardSum}!");
+            // Card is below minimum threshold for standing,
+            // so the dealer must hit.
+            DealCardToSelf();
         }
+        else if (cardSum >= Program.Settings.TargetCardSum)
+        {
+            IsStanding = true;
+        }
+        else
+        {
+            // Calculate if the dealer should hit or stand.
+            var sumLeftToTarget = Program.Settings.TargetCardSum - cardSum;
+            var hitCardValueFactor = 4;
+            if (sumLeftToTarget > Program.Settings.MaxCardValue / hitCardValueFactor)
+            {
+                DealCardToSelf();
+            }
+            else
+            {
+                IsStanding = true;
+            }
+        }
+        
+        Program.CurrentTurn = Program.Turn.Player;
     }
 }
