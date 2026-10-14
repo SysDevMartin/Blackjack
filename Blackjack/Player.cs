@@ -7,6 +7,7 @@ public class Player
 {
     public readonly List<int> CurrentCards = [];
     public bool IsStanding { get; set; }
+    public int Score = 0;
 
     public enum Choice
     {
@@ -42,13 +43,13 @@ public class Player
         foreach (var card in CurrentCards)
         {
             var cardText = $"[bold][lightskyblue1]{card.ToString()}[/][/]";
-            var cardPanel = new Panel(cardText).BorderColor(Color.DeepSkyBlue1);
+            var cardPanel = new Panel(cardText).BorderColor(Color.DarkSlateGray3);
             cardPanels.Add(cardPanel);
         }
         grid.AddRow(cardPanels.ToArray());
 
         var nameText = IsStanding ? "STANDING" : "YOU";
-        var panelColor = IsStanding ? Color.LightCyan1 : Color.CornflowerBlue;
+        var panelColor = IsStanding ? Color.Aqua : Color.DeepSkyBlue1;
         var headerText = $"{nameText} [{CurrentCards.Sum()}]";
         var escapedHeaderMarkup = Markup.Escape(headerText);
         

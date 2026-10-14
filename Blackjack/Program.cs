@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using System.Formats.Asn1;
+using Spectre.Console;
 
 namespace Blackjack;
 
@@ -156,6 +157,17 @@ class Program
             var revealDealerCards = player.IsStanding && dealer.IsStanding;
             AnsiConsole.Clear();
             DisplayGameTitlePanel();
+            
+            if (player.Score > 0 || dealer.Score > 0)
+            {
+                var scoreTable = new Table().BorderColor(Color.Gray);
+                scoreTable.AddColumn("[white]Player[/]");
+                scoreTable.AddColumn("[white]Wins[/]");
+                scoreTable.AddRow("[darkorange]Dealer[/]", $"[darkorange]{dealer.Score.ToString()}[/]");
+                scoreTable.AddRow("[cornflowerblue]You[/]", $"[cornflowerblue]{player.Score.ToString()}[/]");
+                AnsiConsole.Write(scoreTable);
+            }
+            
             dealer.DisplayPanel(revealDealerCards);
             player.DisplayPanel();
             
@@ -214,10 +226,12 @@ class Program
                 
                 if (playerWins)
                 {
-                    AnsiConsole.MarkupLine("[bold][green]Player wins![/][/]");
+                    player.Score++;
+                    AnsiConsole.MarkupLine("[bold][green]You win![/][/]");
                 }
                 else if (dealerWins)
                 {
+                    dealer.Score++;
                     AnsiConsole.MarkupLine("[bold][red]Dealer wins![/][/]");
                 }
                 else
@@ -225,7 +239,7 @@ class Program
                     AnsiConsole.MarkupLine("[bold][yellow]Draw![/][/]");
                 }
                 
-                AnsiConsole.MarkupLine($"[darkgoldenrod]Player has [bold]{playerCardSum}[/] and dealer has [bold]{dealerCardSum}[/][/].");
+                AnsiConsole.MarkupLine($"[darkgoldenrod]You have [bold]{playerCardSum}[/] and dealer has [bold]{dealerCardSum}[/][/].");
             }
 
             // Active game.

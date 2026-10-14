@@ -8,6 +8,7 @@ public class Dealer
     public bool IsStanding { get; set; }
     private readonly Random RandomNumberGenerator = new();
     private const int MinCardSumToStand = 17;
+    public int Score = 0;
 
     public Dealer()
     {
@@ -207,7 +208,7 @@ public class Dealer
         
         var dealerPhrase = Program.CurrentTurn == Program.Turn.Player ? GetRandomPhrase() : "Thinking...";
         var nameText = IsStanding ? "STANDING" : "DEALER";
-        var panelColor = IsStanding ? Color.Yellow1 : Color.DarkOrange;
+        var panelColor = IsStanding ? Color.Orange1 : Color.DarkOrange;
         var headerText = revealCards ? $"{nameText} [{CurrentCards.Sum()}]" : $"{nameText} - {dealerPhrase}";
         var escapedHeaderMarkup = Markup.Escape(headerText);
         
@@ -236,15 +237,18 @@ public class Dealer
     public void MakeTurnDecision()
     {
         var cardSum = CurrentCards.Sum();
-        if (cardSum < MinCardSumToStand)
+        if (
+            (cardSum >= Program.Settings.TargetCardSum) ||
+            (CurrentCards.Count >= Program.Settings.MaxCardCount)
+            )
+        {
+            IsStanding = true;
+        }
+        else if (cardSum < MinCardSumToStand)
         {
             // Card is below minimum threshold for standing,
             // so the dealer must hit.
             DealCardToSelf();
-        }
-        else if (cardSum >= Program.Settings.TargetCardSum)
-        {
-            IsStanding = true;
         }
         else
         {
