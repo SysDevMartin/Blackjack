@@ -1,56 +1,23 @@
-﻿using Spectre.Console;
+﻿using System.IO.Compression;
+using Spectre.Console;
 
 namespace Blackjack;
 
 class Program
 {
-    private const int TargetCardSum = 21;
-    private const int StartingCardCount = 2;
-    
-    //private static Random RandomNumberGenerator = new();
-    private static List<int> CurrentCards = new();
     public static bool IsGameActive = true;
+    
+    public struct Settings
+    {
+        public static int GamePanelWidth { get; } = 100;
+        public static int TargetCardSum { get; } = 21;
+        public static int StartingCardCount { get; } = 2;
+    }
     
     static void Main(string[] args)
     {
         Dealer dealer = new();
         Player player = new();
-        
-        /*int GetRandomCard()
-        {
-            var minNumber = 1;
-            var maxNumber = 10;
-            return RandomNumberGenerator.Next(minNumber, maxNumber + 1);
-        }*/
-
-        /*void DrawCard()
-        {
-            var newCard = GetRandomCard();
-            CurrentCards.Add(newCard);
-            
-            var currentCardSum = CurrentCards.Sum();
-            if (currentCardSum > TargetCardSum)
-            {
-                Console.WriteLine($"Card sum: {CurrentCards.Sum()}");
-                Console.WriteLine($"You went over {TargetCardSum} with your total sum of {currentCardSum} and lost the game!");
-                IsGameActive = false;
-            }
-        }*/
-
-        void Stand()
-        {
-            //Console.WriteLine($"Card sum: {CurrentCards.Sum()}");
-            var currentCardSum = CurrentCards.Sum();
-            if (CurrentCards.Sum() == TargetCardSum)
-            {
-                Console.WriteLine("You won!");
-            }
-            else
-            {
-                Console.WriteLine($"You lost! Your total card sum of {currentCardSum} didn't match the target card sum of {TargetCardSum}.");
-            }
-            IsGameActive = false;
-        }
 
         void QuitGame()
         {
@@ -62,79 +29,50 @@ class Program
             }
         }
 
-        /*void PromptInput()
+        void DisplayGameTitlePanel()
         {
-            while (true)
-            {
-                Console.WriteLine("Enter your choice [1=Draw | 2=Stand | 0=Quit]:");
-                var playerInput = Console.ReadLine();
-
-                switch (playerInput)
+            var titleText = new Markup("[green][bold]BLACKJACK[/][/]\nRules: Get the sum of your cards as close as possible to [bold]21[/] without going over.")
+                .Centered();
+            var gameTitlePanel = new Panel(titleText)
                 {
-                    case "1":
-                        Console.WriteLine("You chose to draw a card.");
-                        DrawCard();
-                        ShowCards();
-                        break;
-                    case "2":
-                        Console.WriteLine("You chose to stand.");
-                        Stand();
-                        break;
-                    case "0":
-                        QuitGame();
-                        break;
-                    default:
-                        Console.WriteLine("Invalid input.");
-                        continue;
+                    Width = Settings.GamePanelWidth
                 }
-
-                break;
-            }
-        }*/
-
-        void PromptSelection()
+                .BorderColor(Color.Green);
+            AnsiConsole.Write(gameTitlePanel);
+        }
+        
+        // Deal a starting hand to the dealer.
+        for (int i = 0; i < Settings.StartingCardCount; i++)
         {
-            var selectedMenuItem = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("What's your choice?")
-                    .AddChoices("Hit", "Stand", "End Game"));
+            dealer.DealCardToSelf();
+        }
+        
+        // Deal a starting hand to the player.
+        for (int i = 0; i < Settings.StartingCardCount; i++)
+        {
+            dealer.DealCardToPlayer(player);
+        }
+        
+        while (IsGameActive)
+        {
+            AnsiConsole.Clear();
+            DisplayGameTitlePanel();
+            dealer.DisplayPanel();
+            player.DisplayPanel();
             
-            switch (selectedMenuItem)
+            var playerChoice = player.PromptChoice();
+            switch (playerChoice)
             {
-                case "Hit":
-                    Console.WriteLine("You chose to draw a card.");
+                case Player.Choice.Hit:
                     dealer.DealCardToPlayer(player);
-                    //ShowCards();
-                    player.DisplayHand();
                     break;
-                case "Stand":
-                    Console.WriteLine("You chose to stand.");
-                    Stand();
+                case Player.Choice.Stand:
+                    // Do nothing.
                     break;
-                case "End Game":
+                case Player.Choice.EndGame:
                     QuitGame();
                     break;
             }
         }
-        
-        var gamePanel = new Panel("BLACKJACK");
-        AnsiConsole.Write(gamePanel);
-        
-        // Draw a starting hand.
-        for (int i = 0; i < StartingCardCount; i++)
-        {
-            dealer.DealCardToPlayer(player);
-        }
-        player.DisplayHand();
-        
-        while (IsGameActive)
-        {
-            //PromptInput();
-            PromptSelection();
-        }
-        
-        Console.WriteLine("----------");
-        Console.WriteLine("Press <Enter> to exit");
-        Console.ReadLine();
     }
 }
