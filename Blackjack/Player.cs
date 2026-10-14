@@ -21,6 +21,8 @@ public class Player
 
     public void DisplayPanel()
     {
+        AnsiConsole.WriteLine("");
+        
         var panelContent = "";
         foreach (var card in CurrentCards)
         {
@@ -37,10 +39,16 @@ public class Player
         .BorderColor(Color.CornflowerBlue);
         
         AnsiConsole.Write(panel);
+
+        /*var grid = new Grid();
+        grid.AddColumn(new GridColumn { Width = 1 });
+        grid.AddColumn(new GridColumn { Width = 1 });*/
     }
     
     public Choice PromptChoice()
     {
+        AnsiConsole.WriteLine("");
+        
         string[] availableChoices =
         {
             "[bold][green]Hit[/][/] [dim]- Get a card from the dealer.[/]",

@@ -77,7 +77,8 @@ public class Dealer
 
     public void DisplayPanel(bool revealCards = false)
     {
-        var panelContent = $"{GetRandomPhrase()}\n";
+        //var panelContent = $"Dealer says: {GetRandomPhrase()}\n";
+        var panelContent = "";
         foreach (var card in CurrentCards)
         {
             if (revealCards)
@@ -90,6 +91,8 @@ public class Dealer
             }
         }
 
+        AnsiConsole.WriteLine("");
+        
         var escapedMarkup = Markup.Escape(panelContent);
         var markup = new Markup(escapedMarkup);
         var panel = new Panel(markup)
