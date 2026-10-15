@@ -24,8 +24,8 @@ public class Dealer
     private int GetRandomCard()
     {
         return RandomNumberGenerator.Next(
-            Program.Settings.MinCardValue,
-            Program.Settings.MaxCardValue + 1
+            Game.Settings.MinCardValue,
+            Game.Settings.MaxCardValue + 1
         );
     }
 
@@ -214,7 +214,7 @@ public class Dealer
         
         var panel = new Panel(grid)
             {
-                Width = Program.Settings.GamePanelWidth
+                Width = Game.Settings.GamePanelWidth
             }
             .Header(escapedHeaderMarkup)
             .BorderColor(panelColor);
@@ -238,8 +238,8 @@ public class Dealer
     {
         var cardSum = CurrentCards.Sum();
         if (
-            (cardSum >= Program.Settings.TargetCardSum) ||
-            (CurrentCards.Count >= Program.Settings.MaxCardCount)
+            (cardSum >= Game.Settings.TargetCardSum) ||
+            (CurrentCards.Count >= Game.Settings.MaxCardCount)
             )
         {
             IsStanding = true;
@@ -253,9 +253,9 @@ public class Dealer
         else
         {
             // Calculate if the dealer should hit or stand.
-            var sumLeftToTarget = Program.Settings.TargetCardSum - cardSum;
+            var sumLeftToTarget = Game.Settings.TargetCardSum - cardSum;
             var hitCardValueFactor = 4;
-            if (sumLeftToTarget > Program.Settings.MaxCardValue / hitCardValueFactor)
+            if (sumLeftToTarget > Game.Settings.MaxCardValue / hitCardValueFactor)
             {
                 DealCardToSelf();
             }

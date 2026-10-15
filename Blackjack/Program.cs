@@ -8,16 +8,6 @@ class Program
     public static GameState CurrentGameState;
     public static Turn CurrentTurn;
     
-    public struct Settings
-    {
-        public static int GamePanelWidth { get; } = 75;
-        public static int TargetCardSum { get; } = 21;
-        public static int StartingCardCount { get; } = 2;
-        public static int MaxCardCount { get; } = 10;
-        public static int MinCardValue { get; } = 1;
-        public static int MaxCardValue { get; } = 10;
-    }
-    
     public enum GameState
     {
         Play,
@@ -53,13 +43,13 @@ class Program
             player.Reset();
         
             // Deal a starting hand to the dealer.
-            for (int i = 0; i < Settings.StartingCardCount; i++)
+            for (int i = 0; i < Game.Settings.StartingCardCount; i++)
             {
                 dealer.DealCardToSelf();
             }
         
             // Deal a starting hand to the player.
-            for (int i = 0; i < Settings.StartingCardCount; i++)
+            for (int i = 0; i < Game.Settings.StartingCardCount; i++)
             {
                 dealer.DealCardToPlayer(player);
             }
@@ -87,7 +77,7 @@ class Program
             switch (playerChoice)
             {
                 case Player.Choice.Hit:
-                    if (player.CurrentCards.Count < Settings.MaxCardCount)
+                    if (player.CurrentCards.Count < Game.Settings.MaxCardCount)
                     {
                         player.IsStanding = false;
                         dealer.DealCardToPlayer(player);
@@ -184,8 +174,8 @@ class Program
                 var playerCardSum = player.CurrentCards.Sum();
                 var dealerCardSum = dealer.CurrentCards.Sum();
                 var playerDealerSumDifference = playerCardSum - dealerCardSum;
-                var isPlayerOverTargetSum = playerCardSum > Settings.TargetCardSum;
-                var isDealerOverTargetSum = dealerCardSum > Settings.TargetCardSum;
+                var isPlayerOverTargetSum = playerCardSum > Game.Settings.TargetCardSum;
+                var isDealerOverTargetSum = dealerCardSum > Game.Settings.TargetCardSum;
                 var playerWins = false;
                 var dealerWins = false;
                 

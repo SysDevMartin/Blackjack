@@ -55,7 +55,7 @@ public class Player
         
         var panel = new Panel(grid)
             {
-                Width = Program.Settings.GamePanelWidth
+                Width = Game.Settings.GamePanelWidth
             }
             .Header(escapedHeaderMarkup)
             .BorderColor(panelColor);
