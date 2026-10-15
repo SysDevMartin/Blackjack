@@ -4,22 +4,24 @@ namespace Blackjack;
 
 public class Dealer
 {
-    public readonly List<int> CurrentCards = [];
-    public bool IsStanding { get; private set; }
+    public PlayerProperties Properties;
+    //public readonly List<int> CurrentCards = [];
+    //public bool IsStanding { get; private set; }
     private readonly Random _randomNumberGenerator = new();
     private const int MinCardSumToStand = 17;
-    public int Score = 0;
+    //public int Score = 0;
 
     public Dealer()
     {
-        Reset();
+        //Reset();
+        Properties = new();
     }
 
-    public void Reset()
+    /*public void Reset()
     {
         IsStanding = false;
         CurrentCards.Clear();
-    }
+    }*/
     
     private int GetRandomCard()
     {
@@ -197,7 +199,7 @@ public class Dealer
         var playerPhrase = Game.CurrentTurn == Game.Turn.Player ? GetRandomPhrase() : "Thinking...";
         
         Display.DisplayCardPanel(
-            CurrentCards,
+            Properties.CurrentCards,
             panelDefaultBorderColor,
             panelHighlightBorderColor,
             cardBorderColor,
@@ -205,7 +207,7 @@ public class Dealer
             playerName,
             playerPhrase,
             Game.Settings.GamePanelWidth,
-            IsStanding,
+            Properties.IsStanding,
             revealCards
         );
     }
@@ -219,18 +221,18 @@ public class Dealer
     public void DealCardToSelf()
     {
         var newCard = GetRandomCard();
-        CurrentCards.Add(newCard);
+        Properties.CurrentCards.Add(newCard);
     }
 
     public void MakeTurnDecision()
     {
-        var cardSum = CurrentCards.Sum();
+        var cardSum = Properties.CurrentCards.Sum();
         if (
             (cardSum >= Game.Settings.TargetCardSum) ||
-            (CurrentCards.Count >= Game.Settings.MaxCardCount)
+            (Properties.CurrentCards.Count >= Game.Settings.MaxCardCount)
             )
         {
-            IsStanding = true;
+            Properties.IsStanding = true;
         }
         else if (cardSum < MinCardSumToStand)
         {
@@ -249,7 +251,7 @@ public class Dealer
             }
             else
             {
-                IsStanding = true;
+                Properties.IsStanding = true;
             }
         }
         
