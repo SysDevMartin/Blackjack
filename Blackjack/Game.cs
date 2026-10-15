@@ -45,20 +45,20 @@ public class Game
         
         void InitializeGame()
         {
-            Game.CurrentGameState = Game.GameState.Play;
-            Game.CurrentTurn = Game.Turn.Player;
+            CurrentGameState = GameState.Play;
+            CurrentTurn = Turn.Player;
 
             dealer.Reset();
             player.Reset();
         
             // Deal a starting hand to the dealer.
-            for (int i = 0; i < Game.Settings.StartingCardCount; i++)
+            for (int i = 0; i < Settings.StartingCardCount; i++)
             {
                 dealer.DealCardToSelf();
             }
         
             // Deal a starting hand to the player.
-            for (int i = 0; i < Game.Settings.StartingCardCount; i++)
+            for (int i = 0; i < Settings.StartingCardCount; i++)
             {
                 dealer.DealCardToPlayer(player);
             }
@@ -67,9 +67,9 @@ public class Game
         void EndGame()
         {
             AnsiConsole.WriteLine("");
-            if (AnsiConsole.Confirm("Quit game? All progress will be lost."))
+            if (AnsiConsole.Confirm("[bold]Quit the game?[/] [gray50]All progress will be lost.[/]"))
             {
-                Game.CurrentGameState = Game.GameState.Quit;
+                CurrentGameState = GameState.Quit;
             }
         }
 
@@ -86,11 +86,11 @@ public class Game
             switch (playerChoice)
             {
                 case Player.Choice.Hit:
-                    if (player.CurrentCards.Count < Game.Settings.MaxCardCount)
+                    if (player.CurrentCards.Count < Settings.MaxCardCount)
                     {
                         player.IsStanding = false;
                         dealer.DealCardToPlayer(player);
-                        Game.CurrentTurn = Game.Turn.Dealer;
+                        CurrentTurn = Turn.Dealer;
                     }
                     else
                     {
@@ -99,7 +99,7 @@ public class Game
                     break;
                 case Player.Choice.Stand:
                     player.IsStanding = true;
-                    Game.CurrentTurn = Game.Turn.Dealer;
+                    CurrentTurn = Turn.Dealer;
                     break;
                 case Player.Choice.EndGame:
                     EndGame();
@@ -117,7 +117,7 @@ public class Game
                     var randomSleepTime = randomNumberGenerator.Next(minRandomSleepTime, maxRandomSleepTime + 1);
                     Thread.Sleep(randomSleepTime);
                     dealer.MakeTurnDecision();
-                    Game.CurrentTurn = Game.Turn.Player;
+                    CurrentTurn = Turn.Player;
                 });
         }
         
@@ -151,7 +151,7 @@ public class Game
 
         var gameMessageMarkupText = "";
         
-        while (Game.CurrentGameState != Game.GameState.Quit)
+        while (CurrentGameState != GameState.Quit)
         {
             var revealDealerCards = player.IsStanding && dealer.IsStanding;
             AnsiConsole.Clear();
@@ -179,12 +179,12 @@ public class Game
             if (player.IsStanding && dealer.IsStanding)
             {
                 // Both the player and the dealer are standing.
-                Game.CurrentGameState = Game.GameState.Stand;
+                CurrentGameState = GameState.Stand;
                 var playerCardSum = player.CurrentCards.Sum();
                 var dealerCardSum = dealer.CurrentCards.Sum();
                 var playerDealerSumDifference = playerCardSum - dealerCardSum;
-                var isPlayerOverTargetSum = playerCardSum > Game.Settings.TargetCardSum;
-                var isDealerOverTargetSum = dealerCardSum > Game.Settings.TargetCardSum;
+                var isPlayerOverTargetSum = playerCardSum > Settings.TargetCardSum;
+                var isDealerOverTargetSum = dealerCardSum > Settings.TargetCardSum;
                 var playerWins = false;
                 var dealerWins = false;
                 
@@ -242,20 +242,20 @@ public class Game
             }
 
             // Active game.
-            switch (Game.CurrentGameState)
+            switch (CurrentGameState)
             {
-                case Game.GameState.Play:
-                    switch (Game.CurrentTurn)
+                case GameState.Play:
+                    switch (CurrentTurn)
                     {
-                        case Game.Turn.Player:
+                        case Turn.Player:
                             PerformPlayerTurn(ref gameMessageMarkupText);
                             break;
-                        case Game.Turn.Dealer:
+                        case Turn.Dealer:
                             PerformDealerTurn();
                             break;
                     }
                     break;
-                case Game.GameState.Stand:
+                case GameState.Stand:
                     var menuChoice = PromptMenuChoice();
                     switch (menuChoice)
                     {
@@ -263,7 +263,7 @@ public class Game
                             InitializeGame();
                             break;
                         case MenuChoice.QuitGame:
-                            Game.CurrentGameState = Game.GameState.Quit;
+                            CurrentGameState = GameState.Quit;
                             break;
                     }
                     break;
