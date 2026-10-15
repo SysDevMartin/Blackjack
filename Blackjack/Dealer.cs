@@ -250,4 +250,20 @@ public class Dealer
 
         Game.CurrentTurn = Game.Turn.Player;
     }
+    
+    public void PerformTurn()
+    {
+        AnsiConsole.Status()
+            .Start("\nDealer's turn. Making a decision...", ctx =>
+            {
+                var minRandomSleepTime = 3000;
+                var maxRandomSleepTime = 5000;
+                var randomSleepTime = _randomNumberGenerator.Next(minRandomSleepTime, maxRandomSleepTime + 1);
+                
+                Thread.Sleep(randomSleepTime);
+                MakeTurnDecision();
+                
+                Game.CurrentTurn = Game.Turn.Player;
+            });
+    }
 }

@@ -37,7 +37,33 @@ public class Game
     public static GameState CurrentGameState;
     public static Turn CurrentTurn;
 
-    private void InitializeGame(Player player, Dealer dealer)
+    private MenuChoice PromptMenuChoice()
+    {
+        AnsiConsole.WriteLine("");
+            
+        string[] availableChoices =
+        {
+            "[bold][chartreuse3]Play Again[/][/]",
+            "[bold][red]Quit[/][/]"
+        };
+            
+        var selectedMenuItem = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[bold]Play again?[/]")
+                .AddChoices(availableChoices));
+            
+        switch (selectedMenuItem)
+        {
+            case "[bold][chartreuse3]Play Again[/][/]":
+                return MenuChoice.PlayAgain;
+            case "[bold][red]Quit[/][/]":
+                return MenuChoice.QuitGame;
+        }
+
+        return MenuChoice.None;
+    }
+    
+    private void Initialize(Player player, Dealer dealer)
     {
         CurrentGameState = GameState.Play;
         CurrentTurn = Turn.Player;
@@ -58,7 +84,7 @@ public class Game
         }
     }
 
-    public void EndGame()
+    public void End()
     {
         AnsiConsole.WriteLine("");
         if (AnsiConsole.Confirm("[bold]Quit the game?[/] [gray50]All progress will be lost.[/]"))
@@ -73,49 +99,7 @@ public class Game
         Player player = new();
         var randomNumberGenerator = new Random();
         
-        InitializeGame(player, dealer);
-
-        void PerformDealerTurn()
-        {
-            AnsiConsole.Status()
-                .Start("\nDealer's turn. Making a decision...", ctx =>
-                {
-                    var minRandomSleepTime = 3000;
-                    var maxRandomSleepTime = 5000;
-                    var randomSleepTime = randomNumberGenerator.Next(minRandomSleepTime, maxRandomSleepTime + 1);
-                    Thread.Sleep(randomSleepTime);
-                    dealer.MakeTurnDecision();
-                    CurrentTurn = Turn.Player;
-                });
-        }
-        
-        MenuChoice PromptMenuChoice()
-        {
-            AnsiConsole.WriteLine("");
-            
-            string[] availableChoices =
-            {
-                "[bold][chartreuse3]Play Again[/][/]",
-                "[bold][red]Quit[/][/]"
-            };
-            
-            var selectedMenuItem = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("[bold]Play again?[/]")
-                    .AddChoices(availableChoices));
-            
-            switch (selectedMenuItem)
-            {
-                case "[bold][chartreuse3]Play Again[/][/]":
-                    return MenuChoice.PlayAgain;
-                case "[bold][red]Quit[/][/]":
-                    return MenuChoice.QuitGame;
-            }
-
-            return MenuChoice.None;
-        }
-        
-        InitializeGame(player, dealer);
+        Initialize(player, dealer);
 
         var gameMessageMarkupText = "";
         
@@ -219,7 +203,7 @@ public class Game
                             gameMessageMarkupText = player.PerformTurn(this, dealer);
                             break;
                         case Turn.Dealer:
-                            PerformDealerTurn();
+                            dealer.PerformTurn();
                             break;
                     }
                     break;
@@ -228,7 +212,7 @@ public class Game
                     switch (menuChoice)
                     {
                         case MenuChoice.PlayAgain:
-                            InitializeGame(player, dealer);
+                            Initialize(player, dealer);
                             break;
                         case MenuChoice.QuitGame:
                             CurrentGameState = GameState.Quit;

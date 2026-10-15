@@ -96,7 +96,7 @@ public class Player
                 Game.CurrentTurn = Game.Turn.Dealer;
                 break;
             case ActionChoice.Quit:
-                game.EndGame();
+                game.End();
                 break;
         }
 
