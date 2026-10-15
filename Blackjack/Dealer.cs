@@ -206,7 +206,7 @@ public class Dealer
         }
         grid.AddRow(cardPanels.ToArray());
         
-        var dealerPhrase = Program.CurrentTurn == Program.Turn.Player ? GetRandomPhrase() : "Thinking...";
+        var dealerPhrase = Game.CurrentTurn == Game.Turn.Player ? GetRandomPhrase() : "Thinking...";
         var nameText = IsStanding ? "STANDING" : "DEALER";
         var panelColor = IsStanding ? Color.Orange1 : Color.DarkOrange;
         var headerText = revealCards ? $"{nameText} [{CurrentCards.Sum()}]" : $"{nameText} - {dealerPhrase}";
@@ -265,6 +265,6 @@ public class Dealer
             }
         }
         
-        Program.CurrentTurn = Program.Turn.Player;
+        Game.CurrentTurn = Game.Turn.Player;
     }
 }
