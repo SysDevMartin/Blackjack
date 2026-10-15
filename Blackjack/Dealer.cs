@@ -186,38 +186,6 @@ public class Dealer
         var randomIndex = _randomNumberGenerator.Next(availablePhrases.Length);
         return availablePhrases[randomIndex];
     }
-
-    /*public void DisplayPanel(bool revealCards = false)
-    {
-        AnsiConsole.WriteLine("");
-        
-        var grid = new Grid();
-        grid.AddColumns(CurrentCards.Count);
-        List<Panel> cardPanels = new();
-        foreach (var card in CurrentCards)
-        {
-            var cardText = revealCards ? $"[bold][lightgoldenrod3]{card.ToString()}[/][/]" : "[bold][lightgoldenrod3]?[/][/]";
-            var cardPanel = new Panel(cardText).BorderColor(Color.LightSalmon1);
-            
-            cardPanels.Add(cardPanel);
-        }
-        grid.AddRow(cardPanels.ToArray());
-        
-        var dealerPhrase = Game.CurrentTurn == Game.Turn.Player ? GetRandomPhrase() : "Thinking...";
-        var nameText = IsStanding ? "STANDING" : "DEALER";
-        var panelColor = IsStanding ? Color.Orange1 : Color.DarkOrange;
-        var headerText = revealCards ? $"{nameText} [{CurrentCards.Sum()}]" : $"{nameText} - {dealerPhrase}";
-        var escapedHeaderMarkup = Markup.Escape(headerText);
-        
-        var panel = new Panel(grid)
-            {
-                Width = Game.Settings.GamePanelWidth
-            }
-            .Header(escapedHeaderMarkup)
-            .BorderColor(panelColor);
-        
-        AnsiConsole.Write(panel);
-    }*/
     
     public void DisplayCardPanel(bool revealCards)
     {
@@ -245,7 +213,7 @@ public class Dealer
     public void DealCardToPlayer(Player player)
     {
         var newCard = GetRandomCard();
-        player.CurrentCards.Add(newCard);
+        player.Properties.CurrentCards.Add(newCard);
     }
 
     public void DealCardToSelf()
