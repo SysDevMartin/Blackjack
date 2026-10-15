@@ -48,7 +48,7 @@ public class Game
             CurrentGameState = GameState.Play;
             CurrentTurn = Turn.Player;
 
-            dealer.Reset();
+            dealer.Properties.ResetState();
             player.Properties.ResetState();
         
             // Deal a starting hand to the dealer.
@@ -153,16 +153,16 @@ public class Game
         
         while (CurrentGameState != GameState.Quit)
         {
-            var revealDealerCards = player.Properties.IsStanding && dealer.IsStanding;
+            var revealDealerCards = player.Properties.IsStanding && dealer.Properties.IsStanding;
             AnsiConsole.Clear();
             DisplayGameTitlePanel();
             
-            if (player.Properties.Score > 0 || dealer.Score > 0)
+            if (player.Properties.Score > 0 || dealer.Properties.Score > 0)
             {
                 var scoreTable = new Table().BorderColor(Color.Gray);
                 scoreTable.AddColumn("[white]Player[/]");
                 scoreTable.AddColumn("[white]Wins[/]");
-                scoreTable.AddRow("[darkorange]Dealer[/]", $"[darkorange]{dealer.Score.ToString()}[/]");
+                scoreTable.AddRow("[darkorange]Dealer[/]", $"[darkorange]{dealer.Properties.Score.ToString()}[/]");
                 scoreTable.AddRow("[cornflowerblue]You[/]", $"[cornflowerblue]{player.Properties.Score.ToString()}[/]");
                 AnsiConsole.Write(scoreTable);
             }
@@ -176,12 +176,12 @@ public class Game
                 gameMessageMarkupText = "";
             }
 
-            if (player.Properties.IsStanding && dealer.IsStanding)
+            if (player.Properties.IsStanding && dealer.Properties.IsStanding)
             {
                 // Both the player and the dealer are standing.
                 CurrentGameState = GameState.Stand;
                 var playerCardSum = player.Properties.CurrentCards.Sum();
-                var dealerCardSum = dealer.CurrentCards.Sum();
+                var dealerCardSum = dealer.Properties.CurrentCards.Sum();
                 var playerDealerSumDifference = playerCardSum - dealerCardSum;
                 var isPlayerOverTargetSum = playerCardSum > Settings.TargetCardSum;
                 var isDealerOverTargetSum = dealerCardSum > Settings.TargetCardSum;
@@ -230,7 +230,7 @@ public class Game
                 }
                 else if (dealerWins)
                 {
-                    dealer.Score++;
+                    dealer.Properties.AddScore();
                     AnsiConsole.MarkupLine("[bold][red]Dealer wins![/][/]");
                 }
                 else
