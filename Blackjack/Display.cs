@@ -30,10 +30,13 @@ public class Display
         grid.AddColumns(cardList.Count);
         
         List<Panel> cardPanelList = new();
-        
-        foreach (var card in cardList)
+
+        for (int i = 0; i < cardList.Count; i++)
         {
-            var cardText = revealCards ? $"[bold][{cardTextColorName}]{card.ToString()}[/][/]" : $"[bold][{cardTextColorName}]?[/][/]";
+            var card = cardList[i];
+            var reveal = (i != 1) || revealCards;
+            
+            var cardText = reveal ? $"[bold][{cardTextColorName}]{card.ToString()}[/][/]" : $"[bold][{cardTextColorName}]?[/][/]";
             var cardPanel = new Panel(cardText).BorderColor(cardBorderColor);
             cardPanelList.Add(cardPanel);
         }
