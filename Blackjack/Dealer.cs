@@ -187,7 +187,7 @@ public class Dealer
         return availablePhrases[randomIndex];
     }
 
-    public void DisplayPanel(bool revealCards = false)
+    /*public void DisplayPanel(bool revealCards = false)
     {
         AnsiConsole.WriteLine("");
         
@@ -217,6 +217,27 @@ public class Dealer
             .BorderColor(panelColor);
         
         AnsiConsole.Write(panel);
+    }*/
+    
+    public void DisplayCardPanel(bool revealCards)
+    {
+        var panelDefaultBorderColor = Color.DarkOrange;
+        var panelHighlightBorderColor = Color.Orange1;
+        var cardBorderColor = Color.LightSalmon1;
+        var cardTextColorName = "lightgoldenrod3";
+        var playerName = "DEALER";
+        
+        Display.DisplayCardPanel(
+            CurrentCards,
+            panelDefaultBorderColor,
+            panelHighlightBorderColor,
+            cardBorderColor,
+            cardTextColorName,
+            playerName,
+            Game.Settings.GamePanelWidth,
+            IsStanding,
+            revealCards
+        );
     }
     
     public void DealCardToPlayer(Player player)
