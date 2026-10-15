@@ -2,7 +2,7 @@
 
 public class PlayerProperties
 {
-    public readonly List<int> CurrentCards = [];
+    public readonly List<int> Cards = [];
     public bool IsStanding { get; set; }
     public int Score { get; private set; }
     
@@ -15,13 +15,13 @@ public class PlayerProperties
 
     public void ResetState()
     {
-        CurrentCards.Clear();
+        Cards.Clear();
         IsStanding = false;
     }
 
     public void AddRandomCard()
     {
-        CurrentCards.Add(GetRandomCard());
+        Cards.Add(GetRandomCard());
     }
 
     public void AddScore()

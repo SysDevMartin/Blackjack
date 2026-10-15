@@ -184,7 +184,7 @@ public class Dealer
         var playerPhrase = Game.CurrentTurn == Game.Turn.Player ? GetRandomPhrase() : "Thinking...";
 
         Display.DisplayCardPanel(
-            Properties.CurrentCards,
+            Properties.Cards,
             panelDefaultBorderColor,
             panelHighlightBorderColor,
             cardBorderColor,
@@ -211,19 +211,18 @@ public class Dealer
     {
         if (!Properties.IsStanding)
         {
-            var cardSum = Properties.CurrentCards.Sum();
+            var cardSum = Properties.Cards.Sum();
             
             if (
                 (cardSum >= Game.Settings.TargetCardSum) ||
-                (Properties.CurrentCards.Count >= Game.Settings.MaxCardCount)
+                (Properties.Cards.Count >= Game.Settings.MaxCardCount)
             )
             {
                 Properties.IsStanding = true;
             }
             else if (cardSum < MinCardSumToStand)
             {
-                // Card is below minimum threshold for standing,
-                // so the dealer must hit.
+                // Card is below minimum threshold for standing, so the dealer must hit.
                 DealCardToSelf();
             }
             else

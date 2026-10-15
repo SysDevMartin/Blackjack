@@ -30,7 +30,7 @@ public class Player
         var revealCards = true;
         
         Display.DisplayCardPanel(
-            Properties.CurrentCards,
+            Properties.Cards,
             panelDefaultBorderColor,
             panelHighlightBorderColor,
             cardBorderColor,

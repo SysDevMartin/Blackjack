@@ -88,7 +88,7 @@ public class Game
             switch (playerChoice)
             {
                 case Player.Choice.Hit:
-                    if (player.Properties.CurrentCards.Count < Settings.MaxCardCount)
+                    if (player.Properties.Cards.Count < Settings.MaxCardCount)
                     {
                         player.Properties.IsStanding = false;
                         dealer.DealCardToPlayer(player);
@@ -182,8 +182,8 @@ public class Game
             {
                 // Both the player and the dealer are standing.
                 CurrentGameState = GameState.Stand;
-                var playerCardSum = player.Properties.CurrentCards.Sum();
-                var dealerCardSum = dealer.Properties.CurrentCards.Sum();
+                var playerCardSum = player.Properties.Cards.Sum();
+                var dealerCardSum = dealer.Properties.Cards.Sum();
                 var playerDealerSumDifference = playerCardSum - dealerCardSum;
                 var isPlayerOverTargetSum = playerCardSum > Settings.TargetCardSum;
                 var isDealerOverTargetSum = dealerCardSum > Settings.TargetCardSum;
