@@ -5,8 +5,8 @@ namespace Blackjack;
 public class Dealer
 {
     public readonly List<int> CurrentCards = [];
-    public bool IsStanding { get; set; }
-    private readonly Random RandomNumberGenerator = new();
+    public bool IsStanding { get; private set; }
+    private readonly Random _randomNumberGenerator = new();
     private const int MinCardSumToStand = 17;
     public int Score = 0;
 
@@ -23,7 +23,7 @@ public class Dealer
     
     private int GetRandomCard()
     {
-        return RandomNumberGenerator.Next(
+        return _randomNumberGenerator.Next(
             Game.Settings.MinCardValue,
             Game.Settings.MaxCardValue + 1
         );
@@ -98,19 +98,16 @@ public class Dealer
             "What's your secret plan?",
             "I can feel a questionable decision coming.",
             "Thinking hard over there?",
-            "Boldness is rewarded.",
-            "Sometimes.",
+            "Boldness is rewarded. Sometimes.",
             "What's the smart move?",
             "What's the fun move?",
-            "Those aren't always the same thing.",
             "Do you believe in destiny?",
             "This is where legends are made. Or cautionary tales.",
             "Feeling brave enough for another card?",
             "Happy to stay where you are?",
             "Don't let me influence you.",
             "I'm just the dealer.",
-            "You're driving this bus.",
-            "Hopefully with a license.",
+            "You're driving this bus. Hopefully with a license.",
             "Take a chance.",
             "Play it safe. Or surprise us all.",
             "The cards have done their part.",
@@ -129,7 +126,7 @@ public class Dealer
             "Sticking with that hand?",
             "One more card won't hurt... probably.",
             "You standing on that?",
-            "Feeling good enough to stay?",
+            "Feeling good enough to stand?",
             "Want to take another shot?",
             "This is where things get interesting.",
             "Another card or are you done?",
@@ -186,7 +183,7 @@ public class Dealer
             "Another round?"
         };
         
-        var randomIndex = RandomNumberGenerator.Next(availablePhrases.Length);
+        var randomIndex = _randomNumberGenerator.Next(availablePhrases.Length);
         return availablePhrases[randomIndex];
     }
 
