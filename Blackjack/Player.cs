@@ -5,9 +5,7 @@ namespace Blackjack;
 
 public class Player
 {
-    public readonly List<int> CurrentCards = [];
-    public bool IsStanding { get; set; }
-    public int Score = 0;
+    public PlayerProperties Properties;
 
     public enum Choice
     {
@@ -19,13 +17,7 @@ public class Player
 
     public Player()
     {
-        Reset();
-    }
-
-    public void Reset()
-    {
-        IsStanding = false;
-        CurrentCards.Clear();
+        Properties = new();
     }
 
     public void DisplayCardPanel()
@@ -39,7 +31,7 @@ public class Player
         var revealCards = true;
         
         Display.DisplayCardPanel(
-            CurrentCards,
+            Properties.CurrentCards,
             panelDefaultBorderColor,
             panelHighlightBorderColor,
             cardBorderColor,
@@ -47,7 +39,7 @@ public class Player
             playerName,
             playerPhrase,
             Game.Settings.GamePanelWidth,
-            IsStanding,
+            Properties.IsStanding,
             revealCards
         );
     }
