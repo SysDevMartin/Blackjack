@@ -27,7 +27,6 @@ public class Display
         foreach (var card in cardList)
         {
             var cardText = revealCards ? $"[bold][{cardTextColorName}]{card.ToString()}[/][/]" : $"[bold][{cardTextColorName}]?[/][/]";
-            //var cardText = $"[bold][{cardTextColorName}]{card.ToString()}[/][/]";
             var cardPanel = new Panel(cardText).BorderColor(cardBorderColor);
             cardPanelList.Add(cardPanel);
         }
@@ -37,7 +36,6 @@ public class Display
         var panelColor = isStanding ? panelHighlightBorderColor : panelDefaultBorderColor;
         
         var headerText = revealCards ? $"{nameText} [{cardList.Sum()}]" : $"{nameText} - {playerPhrase}";
-        //var headerText = $"{nameText} [{cardList.Sum()}]";
         var escapedHeaderMarkup = Markup.Escape(headerText);
         
         var panel = new Panel(grid)
