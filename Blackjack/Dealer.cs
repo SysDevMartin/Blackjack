@@ -5,23 +5,13 @@ namespace Blackjack;
 public class Dealer
 {
     public PlayerProperties Properties;
-    //public readonly List<int> CurrentCards = [];
-    //public bool IsStanding { get; private set; }
     private readonly Random _randomNumberGenerator = new();
     private const int MinCardSumToStand = 17;
-    //public int Score = 0;
 
     public Dealer()
     {
-        //Reset();
         Properties = new();
     }
-
-    /*public void Reset()
-    {
-        IsStanding = false;
-        CurrentCards.Clear();
-    }*/
     
     private int GetRandomCard()
     {
