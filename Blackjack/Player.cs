@@ -10,7 +10,7 @@ public class Player
     {
         Hit,
         Stand,
-        EndGame,
+        Quit,
         None
     }
 
@@ -66,7 +66,7 @@ public class Player
             case "[bold][gold3_1]Stand[/][/] [dim]- Stay at current card sum.[/]":
                 return Choice.Stand;
             case "[bold][red]Quit[/][/]":
-                return Choice.EndGame;
+                return Choice.Quit;
         }
 
         return Choice.None;
