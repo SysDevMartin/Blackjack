@@ -37,32 +37,34 @@ public class Game
     public static GameState CurrentGameState;
     public static Turn CurrentTurn;
 
-    public static void Run()
+    private void InitializeGame(Player player, Dealer dealer)
+    {
+        CurrentGameState = GameState.Play;
+        CurrentTurn = Turn.Player;
+
+        dealer.Properties.ResetState();
+        player.Properties.ResetState();
+        
+        // Deal a starting hand to the dealer.
+        for (int i = 0; i < Settings.StartingCardCount; i++)
+        {
+            dealer.DealCardToSelf();
+        }
+        
+        // Deal a starting hand to the player.
+        for (int i = 0; i < Settings.StartingCardCount; i++)
+        {
+            dealer.DealCardToPlayer(player);
+        }
+    }
+    
+    public void Run()
     {
         Dealer dealer = new();
         Player player = new();
         var randomNumberGenerator = new Random();
         
-        void InitializeGame()
-        {
-            CurrentGameState = GameState.Play;
-            CurrentTurn = Turn.Player;
-
-            dealer.Properties.ResetState();
-            player.Properties.ResetState();
-        
-            // Deal a starting hand to the dealer.
-            for (int i = 0; i < Settings.StartingCardCount; i++)
-            {
-                dealer.DealCardToSelf();
-            }
-        
-            // Deal a starting hand to the player.
-            for (int i = 0; i < Settings.StartingCardCount; i++)
-            {
-                dealer.DealCardToPlayer(player);
-            }
-        }
+        InitializeGame(player, dealer);
         
         void EndGame()
         {
@@ -147,7 +149,7 @@ public class Game
             return MenuChoice.None;
         }
         
-        InitializeGame();
+        InitializeGame(player, dealer);
 
         var gameMessageMarkupText = "";
         
@@ -260,7 +262,7 @@ public class Game
                     switch (menuChoice)
                     {
                         case MenuChoice.PlayAgain:
-                            InitializeGame();
+                            InitializeGame(player, dealer);
                             break;
                         case MenuChoice.QuitGame:
                             CurrentGameState = GameState.Quit;
