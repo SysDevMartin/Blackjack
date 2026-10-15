@@ -6,7 +6,7 @@ public class Player
 {
     public PlayerProperties Properties;
 
-    public enum Choice
+    public enum ActionChoice
     {
         Hit,
         Stand,
@@ -43,7 +43,7 @@ public class Player
         );
     }
     
-    public Choice PromptChoice()
+    public ActionChoice PromptActionChoice()
     {
         AnsiConsole.WriteLine("");
         
@@ -62,13 +62,13 @@ public class Player
         switch (selectedMenuItem)
         {
             case "[bold][chartreuse3]Hit[/][/] [dim]- Get a card from the dealer.[/]":
-                return Choice.Hit;
+                return ActionChoice.Hit;
             case "[bold][gold3_1]Stand[/][/] [dim]- Stay at current card sum.[/]":
-                return Choice.Stand;
+                return ActionChoice.Stand;
             case "[bold][red]Quit[/][/]":
-                return Choice.Quit;
+                return ActionChoice.Quit;
         }
 
-        return Choice.None;
+        return ActionChoice.None;
     }
 }

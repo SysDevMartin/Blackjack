@@ -84,10 +84,10 @@ public class Game
 
         void PerformPlayerTurn(ref string gameMessageMarkupText)
         {
-            var playerChoice = player.PromptChoice();
+            var playerChoice = player.PromptActionChoice();
             switch (playerChoice)
             {
-                case Player.Choice.Hit:
+                case Player.ActionChoice.Hit:
                     if (player.Properties.Cards.Count < Settings.MaxCardCount)
                     {
                         player.Properties.IsStanding = false;
@@ -99,11 +99,11 @@ public class Game
                         gameMessageMarkupText = "[red]You cannot ask for more cards. You have reached the limit.[/]";
                     }
                     break;
-                case Player.Choice.Stand:
+                case Player.ActionChoice.Stand:
                     player.Properties.IsStanding = true;
                     CurrentTurn = Turn.Dealer;
                     break;
-                case Player.Choice.Quit:
+                case Player.ActionChoice.Quit:
                     EndGame();
                     break;
             }
