@@ -167,8 +167,8 @@ public class Game
                 AnsiConsole.Write(scoreTable);
             }
             
-            dealer.DisplayPanel(revealDealerCards);
-            player.DisplayPanel();
+            dealer.DisplayCardPanel(revealDealerCards);
+            player.DisplayCardPanel();
             
             if (gameMessageMarkupText.Length > 0)
             {
