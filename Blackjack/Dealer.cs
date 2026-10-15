@@ -226,6 +226,7 @@ public class Dealer
         var cardBorderColor = Color.LightSalmon1;
         var cardTextColorName = "lightgoldenrod3";
         var playerName = "DEALER";
+        var playerPhrase = Game.CurrentTurn == Game.Turn.Player ? GetRandomPhrase() : "Thinking...";
         
         Display.DisplayCardPanel(
             CurrentCards,
@@ -234,6 +235,7 @@ public class Dealer
             cardBorderColor,
             cardTextColorName,
             playerName,
+            playerPhrase,
             Game.Settings.GamePanelWidth,
             IsStanding,
             revealCards

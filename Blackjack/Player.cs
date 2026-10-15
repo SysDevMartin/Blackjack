@@ -28,11 +28,6 @@ public class Player
         CurrentCards.Clear();
     }
 
-    private void GetCardOutput(int number)
-    {
-        
-    }
-
     public void DisplayCardPanel()
     {
         var panelDefaultBorderColor = Color.DeepSkyBlue1;
@@ -40,6 +35,7 @@ public class Player
         var cardBorderColor = Color.DarkSlateGray3;
         var cardTextColorName = "lightskyblue1";
         var playerName = "YOU";
+        var playerPhrase = "";
         var revealCards = true;
         
         Display.DisplayCardPanel(
@@ -49,6 +45,7 @@ public class Player
             cardBorderColor,
             cardTextColorName,
             playerName,
+            playerPhrase,
             Game.Settings.GamePanelWidth,
             IsStanding,
             revealCards
