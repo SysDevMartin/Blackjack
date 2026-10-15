@@ -71,4 +71,35 @@ public class Player
 
         return ActionChoice.None;
     }
+    
+    public string PerformTurn(Game game, Dealer dealer)
+    {
+        var actionMessage = String.Empty;
+        var playerChoice = PromptActionChoice();
+        
+        switch (playerChoice)
+        {
+            case ActionChoice.Hit:
+                if (Properties.Cards.Count < Game.Settings.MaxCardCount)
+                {
+                    Properties.IsStanding = false;
+                    dealer.DealCardToPlayer(this);
+                    Game.CurrentTurn = Game.Turn.Dealer;
+                }
+                else
+                {
+                    actionMessage = "[red]You cannot ask for more cards. You have reached the limit.[/]";
+                }
+                break;
+            case ActionChoice.Stand:
+                Properties.IsStanding = true;
+                Game.CurrentTurn = Game.Turn.Dealer;
+                break;
+            case ActionChoice.Quit:
+                game.EndGame();
+                break;
+        }
+
+        return actionMessage;
+    }
 }

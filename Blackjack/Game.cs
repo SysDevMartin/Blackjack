@@ -57,6 +57,15 @@ public class Game
             dealer.DealCardToPlayer(player);
         }
     }
+
+    public void EndGame()
+    {
+        AnsiConsole.WriteLine("");
+        if (AnsiConsole.Confirm("[bold]Quit the game?[/] [gray50]All progress will be lost.[/]"))
+        {
+            CurrentGameState = GameState.Quit;
+        }
+    }
     
     public void Run()
     {
@@ -65,49 +74,6 @@ public class Game
         var randomNumberGenerator = new Random();
         
         InitializeGame(player, dealer);
-        
-        void EndGame()
-        {
-            AnsiConsole.WriteLine("");
-            if (AnsiConsole.Confirm("[bold]Quit the game?[/] [gray50]All progress will be lost.[/]"))
-            {
-                CurrentGameState = GameState.Quit;
-            }
-        }
-
-        void DisplayGameTitlePanel()
-        {
-            var figlet = new FigletText("BLACKJACK").Color(Color.DarkSeaGreen4_1);
-            AnsiConsole.Write(figlet);
-            AnsiConsole.MarkupLine("  [darkseagreen4]Get the sum of your cards as close as possible to [bold]21[/] without going over.[/]\n");
-        }
-
-        void PerformPlayerTurn(ref string gameMessageMarkupText)
-        {
-            var playerChoice = player.PromptActionChoice();
-            switch (playerChoice)
-            {
-                case Player.ActionChoice.Hit:
-                    if (player.Properties.Cards.Count < Settings.MaxCardCount)
-                    {
-                        player.Properties.IsStanding = false;
-                        dealer.DealCardToPlayer(player);
-                        CurrentTurn = Turn.Dealer;
-                    }
-                    else
-                    {
-                        gameMessageMarkupText = "[red]You cannot ask for more cards. You have reached the limit.[/]";
-                    }
-                    break;
-                case Player.ActionChoice.Stand:
-                    player.Properties.IsStanding = true;
-                    CurrentTurn = Turn.Dealer;
-                    break;
-                case Player.ActionChoice.Quit:
-                    EndGame();
-                    break;
-            }
-        }
 
         void PerformDealerTurn()
         {
@@ -157,7 +123,7 @@ public class Game
         {
             var revealDealerCards = player.Properties.IsStanding && dealer.Properties.IsStanding;
             AnsiConsole.Clear();
-            DisplayGameTitlePanel();
+            Display.DisplayGameLogoPanel();
             
             if (player.Properties.Score > 0 || dealer.Properties.Score > 0)
             {
@@ -250,7 +216,7 @@ public class Game
                     switch (CurrentTurn)
                     {
                         case Turn.Player:
-                            PerformPlayerTurn(ref gameMessageMarkupText);
+                            gameMessageMarkupText = player.PerformTurn(this, dealer);
                             break;
                         case Turn.Dealer:
                             PerformDealerTurn();

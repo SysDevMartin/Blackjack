@@ -4,6 +4,13 @@ namespace Blackjack;
 
 public class Display
 {
+    public static void DisplayGameLogoPanel()
+    {
+        var figlet = new FigletText("BLACKJACK").Color(Color.DarkSeaGreen4_1);
+        AnsiConsole.Write(figlet);
+        AnsiConsole.MarkupLine("  [darkseagreen4]Get the sum of your cards as close as possible to [bold]21[/] without going over.[/]\n");
+    }
+    
     public static void DisplayCardPanel(
         List<int> cardList,
         Color panelDefaultBorderColor,
