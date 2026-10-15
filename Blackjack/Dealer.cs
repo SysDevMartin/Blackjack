@@ -7,6 +7,9 @@ public class Dealer
     public PlayerProperties Properties;
     private readonly Random _randomNumberGenerator = new();
     private const int MinCardSumToStand = 17;
+    private const int StandWhenReachingSumLeftToTarget = 4;
+    private const int PercentageChanceToIgnoreSumWhenBelowTarget = 50;
+    private const int SumLeftToTargetForIgnoreChance = 3;
 
     public Dealer()
     {
@@ -166,11 +169,11 @@ public class Dealer
             "What's the call?",
             "Another round?"
         };
-        
+
         var randomIndex = _randomNumberGenerator.Next(availablePhrases.Length);
         return availablePhrases[randomIndex];
     }
-    
+
     public void DisplayCardPanel(bool revealCards)
     {
         var panelDefaultBorderColor = Color.DarkOrange;
@@ -179,7 +182,7 @@ public class Dealer
         var cardTextColorName = "lightgoldenrod3";
         var playerName = "DEALER";
         var playerPhrase = Game.CurrentTurn == Game.Turn.Player ? GetRandomPhrase() : "Thinking...";
-        
+
         Display.DisplayCardPanel(
             Properties.CurrentCards,
             panelDefaultBorderColor,
@@ -193,7 +196,7 @@ public class Dealer
             revealCards
         );
     }
-    
+
     public void DealCardToPlayer(Player player)
     {
         player.Properties.AddRandomCard();
@@ -206,35 +209,46 @@ public class Dealer
 
     public void MakeTurnDecision()
     {
-        var cardSum = Properties.CurrentCards.Sum();
-        if (
-            (cardSum >= Game.Settings.TargetCardSum) ||
-            (Properties.CurrentCards.Count >= Game.Settings.MaxCardCount)
+        if (!Properties.IsStanding)
+        {
+            var cardSum = Properties.CurrentCards.Sum();
+            
+            if (
+                (cardSum >= Game.Settings.TargetCardSum) ||
+                (Properties.CurrentCards.Count >= Game.Settings.MaxCardCount)
             )
-        {
-            Properties.IsStanding = true;
-        }
-        else if (cardSum < MinCardSumToStand)
-        {
-            // Card is below minimum threshold for standing,
-            // so the dealer must hit.
-            DealCardToSelf();
-        }
-        else
-        {
-            // Calculate if the dealer should hit or stand.
-            var sumLeftToTarget = Game.Settings.TargetCardSum - cardSum;
-            var hitCardValueFactor = 4;
-            if (sumLeftToTarget > Game.Settings.MaxCardValue / hitCardValueFactor)
             {
+                Properties.IsStanding = true;
+            }
+            else if (cardSum < MinCardSumToStand)
+            {
+                // Card is below minimum threshold for standing,
+                // so the dealer must hit.
                 DealCardToSelf();
             }
             else
             {
-                Properties.IsStanding = true;
+                // If the other conditions fail, calculate if the dealer should hit or stand.
+                var sumLeftToTarget = Game.Settings.TargetCardSum - cardSum;
+
+                // When the card sum left to the target sum is equal to or greater than a certain value,
+                // roll the dice to check if the dealer should gamble with one more card.
+                var ignoreSumLeftToTarget = (
+                    (sumLeftToTarget >= SumLeftToTargetForIgnoreChance) &&
+                    (_randomNumberGenerator.Next(0, 100 + 1) >= PercentageChanceToIgnoreSumWhenBelowTarget)
+                );
+
+                if ((sumLeftToTarget > StandWhenReachingSumLeftToTarget) || ignoreSumLeftToTarget)
+                {
+                    DealCardToSelf();
+                }
+                else
+                {
+                    Properties.IsStanding = true;
+                }
             }
         }
-        
+
         Game.CurrentTurn = Game.Turn.Player;
     }
 }
