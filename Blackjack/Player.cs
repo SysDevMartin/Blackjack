@@ -33,34 +33,26 @@ public class Player
         
     }
 
-    public void DisplayPanel()
+    public void DisplayCardPanel()
     {
-        AnsiConsole.WriteLine("");
+        var panelDefaultBorderColor = Color.DeepSkyBlue1;
+        var panelHighlightBorderColor = Color.Aqua;
+        var cardBorderColor = Color.DarkSlateGray3;
+        var cardTextColorName = "lightskyblue1";
+        var playerName = "YOU";
+        var revealCards = true;
         
-        var grid = new Grid();
-        grid.AddColumns(CurrentCards.Count);
-        List<Panel> cardPanels = new();
-        foreach (var card in CurrentCards)
-        {
-            var cardText = $"[bold][lightskyblue1]{card.ToString()}[/][/]";
-            var cardPanel = new Panel(cardText).BorderColor(Color.DarkSlateGray3);
-            cardPanels.Add(cardPanel);
-        }
-        grid.AddRow(cardPanels.ToArray());
-
-        var nameText = IsStanding ? "STANDING" : "YOU";
-        var panelColor = IsStanding ? Color.Aqua : Color.DeepSkyBlue1;
-        var headerText = $"{nameText} [{CurrentCards.Sum()}]";
-        var escapedHeaderMarkup = Markup.Escape(headerText);
-        
-        var panel = new Panel(grid)
-            {
-                Width = Game.Settings.GamePanelWidth
-            }
-            .Header(escapedHeaderMarkup)
-            .BorderColor(panelColor);
-        
-        AnsiConsole.Write(panel);
+        Display.DisplayCardPanel(
+            CurrentCards,
+            panelDefaultBorderColor,
+            panelHighlightBorderColor,
+            cardBorderColor,
+            cardTextColorName,
+            playerName,
+            Game.Settings.GamePanelWidth,
+            IsStanding,
+            revealCards
+        );
     }
     
     public Choice PromptChoice()
