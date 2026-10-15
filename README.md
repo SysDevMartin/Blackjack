@@ -1,0 +1,1 @@
+This project is a Blackjack game made in a C# console application (with JetBrains Rider) that uses the [Spectre.Console](https://spectreconsole.net) package for nicer console output.
