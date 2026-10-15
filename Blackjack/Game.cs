@@ -101,7 +101,7 @@ public class Game
                     player.Properties.IsStanding = true;
                     CurrentTurn = Turn.Dealer;
                     break;
-                case Player.Choice.EndGame:
+                case Player.Choice.Quit:
                     EndGame();
                     break;
             }
