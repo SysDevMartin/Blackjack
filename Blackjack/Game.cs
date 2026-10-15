@@ -49,7 +49,7 @@ public class Game
             CurrentTurn = Turn.Player;
 
             dealer.Reset();
-            player.Reset();
+            player.Properties.ResetState();
         
             // Deal a starting hand to the dealer.
             for (int i = 0; i < Settings.StartingCardCount; i++)
@@ -86,9 +86,9 @@ public class Game
             switch (playerChoice)
             {
                 case Player.Choice.Hit:
-                    if (player.CurrentCards.Count < Settings.MaxCardCount)
+                    if (player.Properties.CurrentCards.Count < Settings.MaxCardCount)
                     {
-                        player.IsStanding = false;
+                        player.Properties.IsStanding = false;
                         dealer.DealCardToPlayer(player);
                         CurrentTurn = Turn.Dealer;
                     }
@@ -98,7 +98,7 @@ public class Game
                     }
                     break;
                 case Player.Choice.Stand:
-                    player.IsStanding = true;
+                    player.Properties.IsStanding = true;
                     CurrentTurn = Turn.Dealer;
                     break;
                 case Player.Choice.EndGame:
@@ -153,17 +153,17 @@ public class Game
         
         while (CurrentGameState != GameState.Quit)
         {
-            var revealDealerCards = player.IsStanding && dealer.IsStanding;
+            var revealDealerCards = player.Properties.IsStanding && dealer.IsStanding;
             AnsiConsole.Clear();
             DisplayGameTitlePanel();
             
-            if (player.Score > 0 || dealer.Score > 0)
+            if (player.Properties.Score > 0 || dealer.Score > 0)
             {
                 var scoreTable = new Table().BorderColor(Color.Gray);
                 scoreTable.AddColumn("[white]Player[/]");
                 scoreTable.AddColumn("[white]Wins[/]");
                 scoreTable.AddRow("[darkorange]Dealer[/]", $"[darkorange]{dealer.Score.ToString()}[/]");
-                scoreTable.AddRow("[cornflowerblue]You[/]", $"[cornflowerblue]{player.Score.ToString()}[/]");
+                scoreTable.AddRow("[cornflowerblue]You[/]", $"[cornflowerblue]{player.Properties.Score.ToString()}[/]");
                 AnsiConsole.Write(scoreTable);
             }
             
@@ -176,11 +176,11 @@ public class Game
                 gameMessageMarkupText = "";
             }
 
-            if (player.IsStanding && dealer.IsStanding)
+            if (player.Properties.IsStanding && dealer.IsStanding)
             {
                 // Both the player and the dealer are standing.
                 CurrentGameState = GameState.Stand;
-                var playerCardSum = player.CurrentCards.Sum();
+                var playerCardSum = player.Properties.CurrentCards.Sum();
                 var dealerCardSum = dealer.CurrentCards.Sum();
                 var playerDealerSumDifference = playerCardSum - dealerCardSum;
                 var isPlayerOverTargetSum = playerCardSum > Settings.TargetCardSum;
@@ -225,7 +225,7 @@ public class Game
                 
                 if (playerWins)
                 {
-                    player.Score++;
+                    player.Properties.AddScore();
                     AnsiConsole.MarkupLine("[bold][green]You win![/][/]");
                 }
                 else if (dealerWins)
