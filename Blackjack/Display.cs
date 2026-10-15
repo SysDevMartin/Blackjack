@@ -44,8 +44,10 @@ public class Display
 
         var nameText = isStanding ? "STANDING" : playerName;
         var panelColor = isStanding ? panelHighlightBorderColor : panelDefaultBorderColor;
-        
-        var headerText = revealCards ? $"{nameText} [{cardList.Sum()}]" : $"{nameText} - {playerPhrase}";
+
+        var cardSum = cardList.Sum();
+        var hiddenCardSum = cardList.Sum() - cardList[1];
+        var headerText = revealCards ? $"{nameText} [{cardSum}]" : $"{nameText} [{hiddenCardSum}+?] - {playerPhrase}";
         var escapedHeaderMarkup = Markup.Escape(headerText);
         
         var panel = new Panel(grid)
