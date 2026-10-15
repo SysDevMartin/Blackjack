@@ -12,14 +12,6 @@ public class Dealer
     {
         Properties = new();
     }
-    
-    private int GetRandomCard()
-    {
-        return _randomNumberGenerator.Next(
-            Game.Settings.MinCardValue,
-            Game.Settings.MaxCardValue + 1
-        );
-    }
 
     public string GetRandomPhrase()
     {
@@ -204,14 +196,12 @@ public class Dealer
     
     public void DealCardToPlayer(Player player)
     {
-        var newCard = GetRandomCard();
-        player.Properties.CurrentCards.Add(newCard);
+        player.Properties.AddRandomCard();
     }
 
     public void DealCardToSelf()
     {
-        var newCard = GetRandomCard();
-        Properties.CurrentCards.Add(newCard);
+        Properties.AddRandomCard();
     }
 
     public void MakeTurnDecision()
