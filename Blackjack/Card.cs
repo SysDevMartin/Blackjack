@@ -11,15 +11,13 @@ public class Card
     
     private readonly int _originalValue;
 
-    public Card(int value, int totalCardSum)
+    public Card(int value)
     {
         _originalValue = value;
         EffectiveValue = value;
 
         if (_originalValue == AceCardValue)
         {
-            // It's an ace!
-            UpdateAceValue(totalCardSum);
             IsAce = true;
         }
     }
@@ -39,11 +37,13 @@ public class Card
 
     public Panel GetCardPanel(bool revealCard)
     {
-        var borderColor = IsAce ? Color.Purple : Color.Gray50;
-        var textColorName = IsAce ? "mediumpurple1" : "gray78";
+        var borderColor = IsAce && revealCard ? Color.Purple : Color.Gray50;
+        var textColorName = IsAce && revealCard ? "mediumpurple1" : "gray78";
+        var cardValueText = EffectiveValue.ToString();
         
-        var cardText = revealCard ? $"[bold][{textColorName}]{EffectiveValue.ToString()}[/][/]" : $"[bold][{textColorName}]?[/][/]";
+        var cardText = revealCard ? $"[bold][{textColorName}]{cardValueText}[/][/]" : $"[bold][{textColorName}]?[/][/]";
         var cardPanel = new Panel(cardText).BorderColor(borderColor);
+        
         return cardPanel;
     }
 }

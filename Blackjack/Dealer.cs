@@ -4,23 +4,18 @@ namespace Blackjack;
 
 public class Dealer
 {
-    public bool IsStanding { get; set; }
-    public readonly Stats Stats;
-    public readonly Hand Hand;
-    public readonly Color BorderColor = Color.Red;
-    public readonly string TextColorName = "red";
-
-    private readonly Random _randomNumberGenerator = new();
     private const int MinCardSumToStand = 17;
     private const int StandWhenReachingSumLeftToTarget = 4;
     private const int PercentageChanceToIgnoreSumWhenBelowTarget = 50;
     private const int SumLeftToTargetForIgnoreChance = 3;
+    private const string TextColorName = "red";
     
-    public Dealer()
-    {
-        Stats = new Stats(1000, 1.0f);
-        Hand = new();
-    }
+    public bool IsStanding { get; set; }
+    public readonly Hand Hand = new();
+    
+    private readonly Stats _stats = new(Game.Settings.StartingMaxHealth, Game.Settings.StartingDamageMultiplier);
+    private readonly Color _borderColor = Color.Red;
+    private readonly Random _randomNumberGenerator = new();
 
     public string GetRandomPhrase()
     {
@@ -180,12 +175,12 @@ public class Dealer
         return availablePhrases[randomIndex];
     }
 
-    public void DisplayPanel()
+    public void DisplayPanel(bool revealCards)
     {
-        Display.DisplayPlayerPanel(Hand, Stats, "DEALER", BorderColor, TextColorName, false);
+        Display.DisplayPlayerPanel(Hand, _stats, "DEALER", _borderColor, TextColorName, revealCards);
     }
 
-    public void MakeTurnDecision()
+    private void MakeTurnDecision()
     {
         if (!IsStanding)
         {

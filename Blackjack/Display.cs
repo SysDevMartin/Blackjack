@@ -23,6 +23,8 @@ public class Display
         var cardPanel = GetCardPanel(hand, revealCards);
         var damageMultiplierText = $"{stats.DamageMultiplier.ToString(".0#")}x";
         var cardSum = hand.GetEffectiveCardSum();
+        var hiddenCardSum = cardSum - hand.Cards[1].EffectiveValue;
+        var displayedCardSum = revealCards ? $"{cardSum}" : $"{hiddenCardSum} + ?";
         
         var rows = new Rows(
             new Markup($"Health: {stats.CurrentHealth} / {stats.MaxHealth}"),
@@ -30,7 +32,7 @@ public class Display
             new Rule { Style = Style.Parse("gray30") },
             cardPanel,
             new Rule { Style = Style.Parse("gray30") },
-            new Markup($"[{textColorName}]Sum: {cardSum}[/]")
+            new Markup($"[{textColorName}]Sum: {displayedCardSum}[/]")
             );
 
         var panel = new Panel(rows)
@@ -48,8 +50,7 @@ public class Display
         var grid = new Grid();
         grid.AddColumns(hand.Cards.Count);
 
-        List<Panel> cardPanelList = new();
-        var cardSum = hand.GetEffectiveCardSum();
+        var cardPanelList = new List<Panel>();
         var hiddenCardIndex = 1;
 
         for (int i = 0; i < hand.Cards.Count; i++)

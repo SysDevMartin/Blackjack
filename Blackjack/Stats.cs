@@ -1,6 +1,4 @@
-﻿using Spectre.Console;
-
-namespace Blackjack;
+﻿namespace Blackjack;
 
 public class Stats
 {

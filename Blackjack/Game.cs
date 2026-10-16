@@ -6,12 +6,14 @@ public class Game
 {
     public struct Settings
     {
-        public static int GamePanelWidth { get; } = 75;
-        public static int TargetCardSum { get; } = 21;
-        public static int StartingCardCount { get; } = 2;
-        public static int MaxCardCount { get; } = 10;
-        public static int MinCardValue { get; } = 1;
-        public static int MaxCardValue { get; } = 10;
+        public const int GamePanelWidth = 75;
+        public const int TargetCardSum = 21;
+        public const int StartingCardCount = 2;
+        public const int MaxCardCount = 10;
+        public const int MinCardValue = 1;
+        public const int MaxCardValue = 10;
+        public const int StartingMaxHealth = 1000;
+        public const float StartingDamageMultiplier = 1.0f;
     }
     
     public enum GameState
@@ -41,15 +43,10 @@ public class Game
         dealer.Hand.Reset();
         player.Hand.Reset();
         
-        // Deal a starting hand to the dealer.
+        // Deal a starting hand to dealer and player.
         for (int i = 0; i < Settings.StartingCardCount; i++)
         {
             dealer.Hand.AddRandomCard();
-        }
-        
-        // Deal a starting hand to the player.
-        for (int i = 0; i < Settings.StartingCardCount; i++)
-        {
             player.Hand.AddRandomCard();
         }
     }
@@ -135,11 +132,13 @@ public class Game
                     case Turn.Player:
                         gameMessageMarkupText = player.PerformTurn(this, dealer);
                         break;
+                    
                     case Turn.Dealer:
                         dealer.PerformTurn();
                         break;
                 }
                 break;
+            
             case GameState.Stand:
                 var menuChoice = Menu.PromptGameChoice();
                 switch (menuChoice)
@@ -147,6 +146,7 @@ public class Game
                     case Menu.MenuChoice.PlayAgain:
                         Initialize(player, dealer);
                         break;
+                    
                     case Menu.MenuChoice.QuitGame:
                         CurrentGameState = GameState.Quit;
                         break;
@@ -169,10 +169,9 @@ public class Game
             Display.DisplayGameLogoPanel();
             
             var revealDealerCards = player.IsStanding && dealer.IsStanding;
-            
-            dealer.DisplayPanel();
+            dealer.DisplayPanel(revealDealerCards);
             AnsiConsole.WriteLine("");
-            player.DIsplayPanel();
+            player.DisplayPanel();
             
             if (gameMessageMarkupText.Length > 0)
             {

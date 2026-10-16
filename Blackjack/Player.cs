@@ -4,11 +4,13 @@ namespace Blackjack;
 
 public class Player
 {
+    private const string TextColorName = "green";
+    
     public bool IsStanding { get; set; }
-    public readonly Stats Stats;
-    public readonly Hand Hand;
-    public readonly Color BorderColor = Color.Green;
-    public readonly string TextColorName = "green";
+    public readonly Hand Hand = new();
+    
+    private readonly Stats _stats = new(Game.Settings.StartingMaxHealth, Game.Settings.StartingDamageMultiplier);
+    private readonly Color _borderColor = Color.Green;
 
     public enum ActionChoice
     {
@@ -18,15 +20,9 @@ public class Player
         None
     }
 
-    public Player()
+    public void DisplayPanel()
     {
-        Stats = new Stats(1000, 1.0f);
-        Hand = new();
-    }
-
-    public void DIsplayPanel()
-    {
-        Display.DisplayPlayerPanel(Hand, Stats, "YOU", BorderColor, TextColorName, true);
+        Display.DisplayPlayerPanel(Hand, _stats, "YOU", _borderColor, TextColorName, true);
     }
     
     public ActionChoice PromptActionChoice()
@@ -34,23 +30,25 @@ public class Player
         AnsiConsole.WriteLine("");
         
         string[] availableChoices =
-        {
+        [
             "[bold][chartreuse3]Hit[/][/] [dim]- Get a card from the dealer.[/]",
             "[bold][gold3_1]Stand[/][/] [dim]- Stay at current card sum.[/]",
             "[bold][red]Quit[/][/]"
-        };
+        ];
         
         var selectedMenuItem = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("[bold]Your turn. What's your decision?[/]")
                 .AddChoices(availableChoices));
-            
+        
         switch (selectedMenuItem)
         {
             case "[bold][chartreuse3]Hit[/][/] [dim]- Get a card from the dealer.[/]":
                 return ActionChoice.Hit;
+            
             case "[bold][gold3_1]Stand[/][/] [dim]- Stay at current card sum.[/]":
                 return ActionChoice.Stand;
+            
             case "[bold][red]Quit[/][/]":
                 return ActionChoice.Quit;
         }
@@ -77,10 +75,12 @@ public class Player
                     actionMessage = "[red]You cannot ask for more cards. You have reached the limit.[/]";
                 }
                 break;
+            
             case ActionChoice.Stand:
                 IsStanding = true;
                 Game.CurrentTurn = Game.Turn.Dealer;
                 break;
+            
             case ActionChoice.Quit:
                 game.End();
                 break;

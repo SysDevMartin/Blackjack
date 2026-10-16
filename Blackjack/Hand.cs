@@ -2,14 +2,9 @@
 
 public class Hand
 {
-    public readonly List<Card> Cards;
+    public readonly List<Card> Cards = new();
     
     private readonly Random _randomNumberGenerator = new();
-
-    public Hand()
-    {
-        Cards = new List<Card>();
-    }
 
     public void Reset()
     {
@@ -19,14 +14,18 @@ public class Hand
     public int GetEffectiveCardSum()
     {
         var sum = 0;
-        
         foreach (var card in Cards)
         {
-            if (card.IsAce)
-            {
-                card.UpdateAceValue(sum);
-            }
-            
+            sum += card.EffectiveValue;
+        }
+        return sum;
+    }
+
+    public int GetNonAceCardSum()
+    {
+        var sum = 0;
+        foreach (var card in Cards.Where(x => !x.IsAce))
+        {
             sum += card.EffectiveValue;
         }
 
@@ -36,28 +35,17 @@ public class Hand
     public void AddRandomCard()
     {
         Cards.Add(GetRandomCard());
-        RecalculateCardValues();
+        RecalculateCardValues(GetNonAceCardSum());
     }
 
-    private void RecalculateCardValues()
+    private void RecalculateCardValues(int nonAceCardSum)
     {
-        foreach (var card in Cards)
+        var sum = nonAceCardSum;
+        foreach (var card in Cards.Where(x => x.IsAce))
         {
-            if (card.IsAce)
-            {
-                card.UpdateAceValue(GetEffectiveCardSum());
-            }
-        }
-    }
-
-    private int GetTotalCardSum()
-    {
-        var sum = 0;
-        foreach (var card in Cards)
-        {
+            card.UpdateAceValue(sum);
             sum += card.EffectiveValue;
         }
-        return sum;
     }
     
     private Card GetRandomCard()
@@ -66,9 +54,10 @@ public class Hand
         // random function starts at value 0, not 1.
         var randomNumber = _randomNumberGenerator.Next(
             Game.Settings.MinCardValue,
-            Game.Settings.MaxCardValue + 1
+            //Game.Settings.MaxCardValue + 1
+            3
         );
         
-        return new Card(randomNumber, GetTotalCardSum());
+        return new Card(randomNumber);
     }
 }
