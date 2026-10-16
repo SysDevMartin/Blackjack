@@ -6,7 +6,7 @@ public class Display
 {
     public static void DisplayGameLogoPanel()
     {
-        var figlet = new FigletText("BLACKJACK").Color(Color.DarkSeaGreen4_1);
+        var figlet = new FigletText("Blackjack Battle").Color(Color.DarkSeaGreen4_1);
         AnsiConsole.Write(figlet);
         AnsiConsole.MarkupLine("  [darkseagreen4]Get the sum of your cards as close as possible to [bold]21[/] without going over.[/]\n");
     }
@@ -15,6 +15,7 @@ public class Display
         Hand hand,
         Stats stats,
         string playerName,
+        string playerPhrase,
         Color borderColor,
         string textColorName,
         bool revealCards
@@ -25,6 +26,7 @@ public class Display
         var cardSum = hand.GetEffectiveCardSum();
         var hiddenCardSum = cardSum - hand.Cards[1].EffectiveValue;
         var displayedCardSum = revealCards ? $"{cardSum}" : $"{hiddenCardSum} + ?";
+        var headerText = playerPhrase.Length > 0 ? $"{playerName} - {playerPhrase}" : playerName;
         
         var rows = new Rows(
             new Markup($"Health: {stats.CurrentHealth} / {stats.MaxHealth}"),
@@ -39,7 +41,7 @@ public class Display
         {
             Width = Game.Settings.GamePanelWidth
         }
-        .Header(playerName)
+        .Header(headerText)
         .BorderColor(borderColor);
         
         AnsiConsole.Write(panel);

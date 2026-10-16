@@ -22,7 +22,13 @@ public class Player
 
     public void DisplayPanel()
     {
-        Display.DisplayPlayerPanel(Hand, _stats, "YOU", _borderColor, TextColorName, true);
+        Display.DisplayPlayerPanel(
+            Hand, _stats,
+            "YOU",
+            string.Empty,
+            _borderColor,
+            TextColorName,
+            true);
     }
     
     public ActionChoice PromptActionChoice()

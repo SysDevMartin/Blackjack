@@ -54,8 +54,7 @@ public class Hand
         // random function starts at value 0, not 1.
         var randomNumber = _randomNumberGenerator.Next(
             Game.Settings.MinCardValue,
-            //Game.Settings.MaxCardValue + 1
-            3
+            Game.Settings.MaxCardValue + 1
         );
         
         return new Card(randomNumber);

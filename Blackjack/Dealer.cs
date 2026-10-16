@@ -177,7 +177,16 @@ public class Dealer
 
     public void DisplayPanel(bool revealCards)
     {
-        Display.DisplayPlayerPanel(Hand, _stats, "DEALER", _borderColor, TextColorName, revealCards);
+        var phrase = Game.CurrentTurn == Game.Turn.Dealer ? "Thinking..." : GetRandomPhrase();
+        
+        Display.DisplayPlayerPanel(
+            Hand,
+            _stats,
+            "DEALER",
+            phrase,
+            _borderColor,
+            TextColorName,
+            revealCards);
     }
 
     private void MakeTurnDecision()
