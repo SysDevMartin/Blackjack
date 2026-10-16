@@ -167,6 +167,7 @@ public class Game
         {
             AnsiConsole.Clear();
             Display.DisplayGameLogoPanel();
+            AnsiConsole.WriteLine("");
             
             var revealDealerCards = player.IsStanding && dealer.IsStanding;
             dealer.DisplayPanel(revealDealerCards);

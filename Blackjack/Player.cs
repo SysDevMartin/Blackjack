@@ -22,13 +22,17 @@ public class Player
 
     public void DisplayPanel()
     {
+        var name = "YOU";
+        var phrase = string.Empty;
+        var revealCards = true;
+        
         Display.DisplayPlayerPanel(
             Hand, _stats,
-            "YOU",
-            string.Empty,
+            name,
+            phrase,
             _borderColor,
             TextColorName,
-            true);
+            revealCards);
     }
     
     public ActionChoice PromptActionChoice()

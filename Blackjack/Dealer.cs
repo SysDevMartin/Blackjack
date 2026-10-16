@@ -4,6 +4,7 @@ namespace Blackjack;
 
 public class Dealer
 {
+    public const int HiddenCardIndex = 1;
     private const int MinCardSumToStand = 17;
     private const int StandWhenReachingSumLeftToTarget = 4;
     private const int PercentageChanceToIgnoreSumWhenBelowTarget = 50;
@@ -177,12 +178,13 @@ public class Dealer
 
     public void DisplayPanel(bool revealCards)
     {
+        var name = "DEALER";
         var phrase = Game.CurrentTurn == Game.Turn.Dealer ? "Thinking..." : GetRandomPhrase();
         
         Display.DisplayPlayerPanel(
             Hand,
             _stats,
-            "DEALER",
+            name,
             phrase,
             _borderColor,
             TextColorName,
