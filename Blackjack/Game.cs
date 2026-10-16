@@ -35,19 +35,22 @@ public class Game
         CurrentGameState = GameState.Play;
         CurrentTurn = Turn.Player;
 
-        dealer.Properties.ResetState();
-        player.Properties.ResetState();
+        dealer.IsStanding = false;
+        player.IsStanding = false;
+        
+        dealer.Hand.Reset();
+        player.Hand.Reset();
         
         // Deal a starting hand to the dealer.
         for (int i = 0; i < Settings.StartingCardCount; i++)
         {
-            dealer.DealCardToSelf();
+            dealer.Hand.AddRandomCard();
         }
         
         // Deal a starting hand to the player.
         for (int i = 0; i < Settings.StartingCardCount; i++)
         {
-            dealer.DealCardToPlayer(player);
+            player.Hand.AddRandomCard();
         }
     }
 
@@ -63,8 +66,8 @@ public class Game
     private void CheckWinCondition(Player player, Dealer dealer)
     {
         CurrentGameState = GameState.Stand;
-        var playerCardSum = player.Properties.Cards.Sum();
-        var dealerCardSum = dealer.Properties.Cards.Sum();
+        var playerCardSum = player.Hand.GetEffectiveCardSum();
+        var dealerCardSum = dealer.Hand.GetEffectiveCardSum();
         var playerDealerSumDifference = playerCardSum - dealerCardSum;
         var isPlayerOverTargetSum = playerCardSum > Settings.TargetCardSum;
         var isDealerOverTargetSum = dealerCardSum > Settings.TargetCardSum;
@@ -108,12 +111,10 @@ public class Game
         
         if (playerWins)
         {
-            player.Properties.AddScore();
             AnsiConsole.MarkupLine("[bold][green]You win![/][/]");
         }
         else if (dealerWins)
         {
-            dealer.Properties.AddScore();
             AnsiConsole.MarkupLine("[bold][red]Dealer wins![/][/]");
         }
         else
@@ -167,18 +168,7 @@ public class Game
             AnsiConsole.Clear();
             Display.DisplayGameLogoPanel();
             
-            // Show leaderboard table.
-            if (player.Properties.Score > 0 || dealer.Properties.Score > 0)
-            {
-                var scoreTable = new Table().BorderColor(Color.Gray);
-                scoreTable.AddColumn("[white]Player[/]");
-                scoreTable.AddColumn("[white]Wins[/]");
-                scoreTable.AddRow("[darkorange]Dealer[/]", $"[darkorange]{dealer.Properties.Score.ToString()}[/]");
-                scoreTable.AddRow("[cornflowerblue]You[/]", $"[cornflowerblue]{player.Properties.Score.ToString()}[/]");
-                AnsiConsole.Write(scoreTable);
-            }
-            
-            var revealDealerCards = player.Properties.IsStanding && dealer.Properties.IsStanding;
+            var revealDealerCards = player.IsStanding && dealer.IsStanding;
             dealer.DisplayCardPanel(revealDealerCards);
             player.DisplayCardPanel();
             
@@ -189,7 +179,7 @@ public class Game
                 gameMessageMarkupText = "";
             }
 
-            if (player.Properties.IsStanding && dealer.Properties.IsStanding)
+            if (player.IsStanding && dealer.IsStanding)
             {
                 CheckWinCondition(player, dealer);
             }

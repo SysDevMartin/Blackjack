@@ -12,7 +12,7 @@ public class Display
     }
     
     public static void DisplayCardPanel(
-        List<int> cardList,
+        Hand hand,
         Color panelDefaultBorderColor,
         Color panelHighlightBorderColor,
         Color cardBorderColor,
@@ -27,16 +27,18 @@ public class Display
         AnsiConsole.WriteLine("");
         
         var grid = new Grid();
-        grid.AddColumns(cardList.Count);
-        
-        List<Panel> cardPanelList = new();
+        grid.AddColumns(hand.Cards.Count);
 
-        for (int i = 0; i < cardList.Count; i++)
+        List<Panel> cardPanelList = new();
+        var cardSum = hand.GetEffectiveCardSum();
+        var hiddenCardIndex = 1;
+
+        for (int i = 0; i < hand.Cards.Count; i++)
         {
-            var card = cardList[i];
-            var reveal = (i != 1) || revealCards;
+            var card = hand.Cards[i];
+            var reveal = (i != hiddenCardIndex) || revealCards;
             
-            var cardText = reveal ? $"[bold][{cardTextColorName}]{card.ToString()}[/][/]" : $"[bold][{cardTextColorName}]?[/][/]";
+            var cardText = reveal ? $"[bold][{cardTextColorName}]{card.EffectiveValue}[/][/]" : $"[bold][{cardTextColorName}]?[/][/]";
             var cardPanel = new Panel(cardText).BorderColor(cardBorderColor);
             cardPanelList.Add(cardPanel);
         }
@@ -44,9 +46,8 @@ public class Display
 
         var nameText = isStanding ? "STANDING" : playerName;
         var panelColor = isStanding ? panelHighlightBorderColor : panelDefaultBorderColor;
-
-        var cardSum = cardList.Sum();
-        var hiddenCardSum = cardList.Sum() - cardList[1];
+        
+        var hiddenCardSum = cardSum - hand.Cards[hiddenCardIndex].EffectiveValue;
         var headerText = revealCards ? $"{nameText} [{cardSum}]" : $"{nameText} [{hiddenCardSum}+?] - {playerPhrase}";
         var escapedHeaderMarkup = Markup.Escape(headerText);
         

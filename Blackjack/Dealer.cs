@@ -4,7 +4,8 @@ namespace Blackjack;
 
 public class Dealer
 {
-    public PlayerProperties Properties;
+    public bool IsStanding { get; set; }
+    public readonly Hand Hand;
     private readonly Random _randomNumberGenerator = new();
     private const int MinCardSumToStand = 17;
     private const int StandWhenReachingSumLeftToTarget = 4;
@@ -13,7 +14,7 @@ public class Dealer
 
     public Dealer()
     {
-        Properties = new();
+        Hand = new();
     }
 
     public string GetRandomPhrase()
@@ -176,6 +177,7 @@ public class Dealer
 
     public void DisplayCardPanel(bool revealCards)
     {
+        var cardSum = Hand.GetEffectiveCardSum();
         var panelDefaultBorderColor = Color.DarkOrange;
         var panelHighlightBorderColor = Color.Orange1;
         var cardBorderColor = Color.LightSalmon1;
@@ -184,7 +186,7 @@ public class Dealer
         var playerPhrase = Game.CurrentTurn == Game.Turn.Player ? GetRandomPhrase() : "Thinking...";
 
         Display.DisplayCardPanel(
-            Properties.Cards,
+            Hand,
             panelDefaultBorderColor,
             panelHighlightBorderColor,
             cardBorderColor,
@@ -192,38 +194,28 @@ public class Dealer
             playerName,
             playerPhrase,
             Game.Settings.GamePanelWidth,
-            Properties.IsStanding,
+            IsStanding,
             revealCards
         );
     }
 
-    public void DealCardToPlayer(Player player)
-    {
-        player.Properties.AddRandomCard();
-    }
-
-    public void DealCardToSelf()
-    {
-        Properties.AddRandomCard();
-    }
-
     public void MakeTurnDecision()
     {
-        if (!Properties.IsStanding)
+        if (!IsStanding)
         {
-            var cardSum = Properties.Cards.Sum();
+            var cardSum = Hand.GetEffectiveCardSum();
             
             if (
                 (cardSum >= Game.Settings.TargetCardSum) ||
-                (Properties.Cards.Count >= Game.Settings.MaxCardCount)
+                (Hand.Cards.Count >= Game.Settings.MaxCardCount)
             )
             {
-                Properties.IsStanding = true;
+                IsStanding = true;
             }
             else if (cardSum < MinCardSumToStand)
             {
                 // Card is below minimum threshold for standing, so the dealer must hit.
-                DealCardToSelf();
+                Hand.AddRandomCard();
             }
             else
             {
@@ -239,11 +231,11 @@ public class Dealer
 
                 if ((sumLeftToTarget > StandWhenReachingSumLeftToTarget) || ignoreSumLeftToTarget)
                 {
-                    DealCardToSelf();
+                    Hand.AddRandomCard();
                 }
                 else
                 {
-                    Properties.IsStanding = true;
+                    IsStanding = true;
                 }
             }
         }

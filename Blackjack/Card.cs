@@ -6,21 +6,23 @@ public class Card
 {
     private const int AceCardValue = 1;
     private readonly int _originalValue;
-    private int RealValue { get; set; }
+    public int EffectiveValue { get; private set; }
+    public bool IsAce { get; private set; }
 
-    public Card(int value, int cardSum)
+    public Card(int value, int totalCardSum)
     {
         _originalValue = value;
-        RealValue = value;
+        EffectiveValue = value;
 
         if (_originalValue == AceCardValue)
         {
             // It's an ace!
-            SetAceValue(cardSum);
+            UpdateAceValue(totalCardSum);
+            IsAce = true;
         }
     }
 
-    public void SetAceValue(int cardSum)
+    public void UpdateAceValue(int cardSum)
     {
         const int lowAceValue = 1;
         const int highAceValue = 11;
@@ -29,18 +31,20 @@ public class Card
         {
             if (cardSum + highAceValue <= Game.Settings.TargetCardSum)
             {
-                RealValue = highAceValue;
+                EffectiveValue = highAceValue;
             }
             else
             {
-                RealValue = lowAceValue;
+                EffectiveValue = lowAceValue;
             }
+            
+            IsAce = true;
         }
     }
 
     public Panel GetCardPanel(Color borderColor, string valueColorName, bool revealCard)
     {
-        var cardText = revealCard ? $"[bold][{valueColorName}]{RealValue.ToString()}[/][/]" : $"[bold][{valueColorName}]?[/][/]";
+        var cardText = revealCard ? $"[bold][{valueColorName}]{EffectiveValue.ToString()}[/][/]" : $"[bold][{valueColorName}]?[/][/]";
         var cardPanel = new Panel(cardText).BorderColor(borderColor);
         return cardPanel;
     }

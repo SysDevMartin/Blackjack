@@ -4,7 +4,8 @@ namespace Blackjack;
 
 public class Player
 {
-    public PlayerProperties Properties;
+    public bool IsStanding { get; set; }
+    public readonly Hand Hand;
 
     public enum ActionChoice
     {
@@ -16,11 +17,12 @@ public class Player
 
     public Player()
     {
-        Properties = new();
+        Hand = new();
     }
 
     public void DisplayCardPanel()
     {
+        var cardSum = Hand.GetEffectiveCardSum();
         var panelDefaultBorderColor = Color.DeepSkyBlue1;
         var panelHighlightBorderColor = Color.Aqua;
         var cardBorderColor = Color.DarkSlateGray3;
@@ -30,7 +32,7 @@ public class Player
         var revealCards = true;
         
         Display.DisplayCardPanel(
-            Properties.Cards,
+            Hand,
             panelDefaultBorderColor,
             panelHighlightBorderColor,
             cardBorderColor,
@@ -38,7 +40,7 @@ public class Player
             playerName,
             playerPhrase,
             Game.Settings.GamePanelWidth,
-            Properties.IsStanding,
+            IsStanding,
             revealCards
         );
     }
@@ -80,10 +82,10 @@ public class Player
         switch (playerChoice)
         {
             case ActionChoice.Hit:
-                if (Properties.Cards.Count < Game.Settings.MaxCardCount)
+                if (Hand.Cards.Count < Game.Settings.MaxCardCount)
                 {
-                    Properties.IsStanding = false;
-                    dealer.DealCardToPlayer(this);
+                    IsStanding = false;
+                    Hand.AddRandomCard();
                     Game.CurrentTurn = Game.Turn.Dealer;
                 }
                 else
@@ -92,7 +94,7 @@ public class Player
                 }
                 break;
             case ActionChoice.Stand:
-                Properties.IsStanding = true;
+                IsStanding = true;
                 Game.CurrentTurn = Game.Turn.Dealer;
                 break;
             case ActionChoice.Quit:
