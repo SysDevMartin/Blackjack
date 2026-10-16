@@ -5,15 +5,20 @@ namespace Blackjack;
 public class Dealer
 {
     public bool IsStanding { get; set; }
+    public readonly Stats Stats;
     public readonly Hand Hand;
+    public readonly Color BorderColor = Color.Red;
+    public readonly string TextColorName = "red";
+
     private readonly Random _randomNumberGenerator = new();
     private const int MinCardSumToStand = 17;
     private const int StandWhenReachingSumLeftToTarget = 4;
     private const int PercentageChanceToIgnoreSumWhenBelowTarget = 50;
     private const int SumLeftToTargetForIgnoreChance = 3;
-
+    
     public Dealer()
     {
+        Stats = new Stats(1000, 1.0f);
         Hand = new();
     }
 
@@ -175,28 +180,9 @@ public class Dealer
         return availablePhrases[randomIndex];
     }
 
-    public void DisplayCardPanel(bool revealCards)
+    public void DisplayPanel()
     {
-        var cardSum = Hand.GetEffectiveCardSum();
-        var panelDefaultBorderColor = Color.DarkOrange;
-        var panelHighlightBorderColor = Color.Orange1;
-        var cardBorderColor = Color.LightSalmon1;
-        var cardTextColorName = "lightgoldenrod3";
-        var playerName = "DEALER";
-        var playerPhrase = Game.CurrentTurn == Game.Turn.Player ? GetRandomPhrase() : "Thinking...";
-
-        Display.DisplayCardPanel(
-            Hand,
-            panelDefaultBorderColor,
-            panelHighlightBorderColor,
-            cardBorderColor,
-            cardTextColorName,
-            playerName,
-            playerPhrase,
-            Game.Settings.GamePanelWidth,
-            IsStanding,
-            revealCards
-        );
+        Display.DisplayPlayerPanel(Hand, Stats, "DEALER", BorderColor, TextColorName, false);
     }
 
     public void MakeTurnDecision()

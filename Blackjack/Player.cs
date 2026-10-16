@@ -5,7 +5,10 @@ namespace Blackjack;
 public class Player
 {
     public bool IsStanding { get; set; }
+    public readonly Stats Stats;
     public readonly Hand Hand;
+    public readonly Color BorderColor = Color.Green;
+    public readonly string TextColorName = "green";
 
     public enum ActionChoice
     {
@@ -17,32 +20,13 @@ public class Player
 
     public Player()
     {
+        Stats = new Stats(1000, 1.0f);
         Hand = new();
     }
 
-    public void DisplayCardPanel()
+    public void DIsplayPanel()
     {
-        var cardSum = Hand.GetEffectiveCardSum();
-        var panelDefaultBorderColor = Color.DeepSkyBlue1;
-        var panelHighlightBorderColor = Color.Aqua;
-        var cardBorderColor = Color.DarkSlateGray3;
-        var cardTextColorName = "lightskyblue1";
-        var playerName = "YOU";
-        var playerPhrase = "";
-        var revealCards = true;
-        
-        Display.DisplayCardPanel(
-            Hand,
-            panelDefaultBorderColor,
-            panelHighlightBorderColor,
-            cardBorderColor,
-            cardTextColorName,
-            playerName,
-            playerPhrase,
-            Game.Settings.GamePanelWidth,
-            IsStanding,
-            revealCards
-        );
+        Display.DisplayPlayerPanel(Hand, Stats, "YOU", BorderColor, TextColorName, true);
     }
     
     public ActionChoice PromptActionChoice()

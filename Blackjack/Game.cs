@@ -169,8 +169,10 @@ public class Game
             Display.DisplayGameLogoPanel();
             
             var revealDealerCards = player.IsStanding && dealer.IsStanding;
-            dealer.DisplayCardPanel(revealDealerCards);
-            player.DisplayCardPanel();
+            
+            dealer.DisplayPanel();
+            AnsiConsole.WriteLine("");
+            player.DIsplayPanel();
             
             if (gameMessageMarkupText.Length > 0)
             {

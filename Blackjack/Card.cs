@@ -5,9 +5,11 @@ namespace Blackjack;
 public class Card
 {
     private const int AceCardValue = 1;
-    private readonly int _originalValue;
+    
     public int EffectiveValue { get; private set; }
     public bool IsAce { get; private set; }
+    
+    private readonly int _originalValue;
 
     public Card(int value, int totalCardSum)
     {
@@ -29,22 +31,18 @@ public class Card
         
         if (_originalValue == AceCardValue)
         {
-            if (cardSum + highAceValue <= Game.Settings.TargetCardSum)
-            {
-                EffectiveValue = highAceValue;
-            }
-            else
-            {
-                EffectiveValue = lowAceValue;
-            }
-            
+            var highAceStaysBelowOrAtTargetSum = cardSum + highAceValue <= Game.Settings.TargetCardSum;
+            EffectiveValue = highAceStaysBelowOrAtTargetSum ? highAceValue : lowAceValue;
             IsAce = true;
         }
     }
 
-    public Panel GetCardPanel(Color borderColor, string valueColorName, bool revealCard)
+    public Panel GetCardPanel(bool revealCard)
     {
-        var cardText = revealCard ? $"[bold][{valueColorName}]{EffectiveValue.ToString()}[/][/]" : $"[bold][{valueColorName}]?[/][/]";
+        var borderColor = IsAce ? Color.Purple : Color.Gray50;
+        var textColorName = IsAce ? "mediumpurple1" : "gray78";
+        
+        var cardText = revealCard ? $"[bold][{textColorName}]{EffectiveValue.ToString()}[/][/]" : $"[bold][{textColorName}]?[/][/]";
         var cardPanel = new Panel(cardText).BorderColor(borderColor);
         return cardPanel;
     }

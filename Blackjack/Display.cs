@@ -10,22 +10,41 @@ public class Display
         AnsiConsole.Write(figlet);
         AnsiConsole.MarkupLine("  [darkseagreen4]Get the sum of your cards as close as possible to [bold]21[/] without going over.[/]\n");
     }
-    
-    public static void DisplayCardPanel(
+
+    public static void DisplayPlayerPanel(
         Hand hand,
-        Color panelDefaultBorderColor,
-        Color panelHighlightBorderColor,
-        Color cardBorderColor,
-        string cardTextColorName,
+        Stats stats,
         string playerName,
-        string playerPhrase,
-        int panelWidth,
-        bool isStanding,
+        Color borderColor,
+        string textColorName,
         bool revealCards
         )
     {
-        AnsiConsole.WriteLine("");
+        var cardPanel = GetCardPanel(hand, revealCards);
+        var damageMultiplierText = $"{stats.DamageMultiplier.ToString(".0#")}x";
+        var cardSum = hand.GetEffectiveCardSum();
         
+        var rows = new Rows(
+            new Markup($"Health: {stats.CurrentHealth} / {stats.MaxHealth}"),
+            new Markup($"Damage multiplier: {damageMultiplierText}"),
+            new Rule { Style = Style.Parse("gray30") },
+            cardPanel,
+            new Rule { Style = Style.Parse("gray30") },
+            new Markup($"[{textColorName}]Sum: {cardSum}[/]")
+            );
+
+        var panel = new Panel(rows)
+        {
+            Width = Game.Settings.GamePanelWidth
+        }
+        .Header(playerName)
+        .BorderColor(borderColor);
+        
+        AnsiConsole.Write(panel);
+    }
+
+    private static Panel GetCardPanel(Hand hand, bool revealCards)
+    {
         var grid = new Grid();
         grid.AddColumns(hand.Cards.Count);
 
@@ -37,27 +56,17 @@ public class Display
         {
             var card = hand.Cards[i];
             var reveal = (i != hiddenCardIndex) || revealCards;
-            
-            var cardText = reveal ? $"[bold][{cardTextColorName}]{card.EffectiveValue}[/][/]" : $"[bold][{cardTextColorName}]?[/][/]";
-            var cardPanel = new Panel(cardText).BorderColor(cardBorderColor);
+            var cardPanel = card.GetCardPanel(reveal);
             cardPanelList.Add(cardPanel);
         }
         grid.AddRow(cardPanelList.ToArray());
 
-        var nameText = isStanding ? "STANDING" : playerName;
-        var panelColor = isStanding ? panelHighlightBorderColor : panelDefaultBorderColor;
-        
-        var hiddenCardSum = cardSum - hand.Cards[hiddenCardIndex].EffectiveValue;
-        var headerText = revealCards ? $"{nameText} [{cardSum}]" : $"{nameText} [{hiddenCardSum}+?] - {playerPhrase}";
-        var escapedHeaderMarkup = Markup.Escape(headerText);
-        
         var panel = new Panel(grid)
-            {
-                Width = panelWidth
-            }
-            .Header(escapedHeaderMarkup)
-            .BorderColor(panelColor);
-        
-        AnsiConsole.Write(panel);
+        {
+            Width = Game.Settings.GamePanelWidth
+        }
+        .NoBorder();
+
+        return panel;
     }
 }
