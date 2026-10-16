@@ -17,10 +17,16 @@ public class Display
         string playerName,
         string playerPhrase,
         Color borderColor,
-        string textColorName,
-        bool revealCards
+        bool revealCards,
+        bool isStanding
         )
     {
+        if (isStanding)
+        {
+            playerName += " (STANDING)";
+            borderColor = Color.LightGoldenrod1;
+        }
+        
         var cardPanel = GetCardPanel(hand, revealCards);
         var damageMultiplierText = $"{stats.DamageMultiplier}x";
         var cardSum = hand.GetEffectiveCardSum();
@@ -28,10 +34,11 @@ public class Display
         var displayedCardSum = revealCards ? $"{cardSum}" : $"{visibleCardSum} + ?";
         var headerText = playerPhrase.Length > 0 ? $"{playerName} - {playerPhrase}" : playerName;
         var effectiveDamageText = revealCards ? $"{cardSum * stats.DamageMultiplier}" : $"{visibleCardSum * stats.DamageMultiplier}+";
+        var percentageHealth = Math.Round((stats.CurrentHealth / (float)stats.MaxHealth) * 100);
         
         var rows = new Rows(
-            new Markup($"Health: {stats.CurrentHealth} / {stats.MaxHealth}"),
-            new Markup($"Damage multiplier: {damageMultiplierText}"),
+            new Markup($"Health: [bold]{stats.CurrentHealth}[/] / [bold]{stats.MaxHealth}[/] [dim]({percentageHealth}%)[/]"),
+            new Markup($"Damage multiplier: [bold]{damageMultiplierText}[/]"),
             new Rule { Style = Style.Parse("gray30") },
             cardPanel,
             new Rule { Style = Style.Parse("gray30") },

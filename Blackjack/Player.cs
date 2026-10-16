@@ -4,12 +4,12 @@ namespace Blackjack;
 
 public class Player
 {
-    private const string TextColorName = "green";
+    //private const string TextColorName = "green";
     
     public bool IsStanding { get; set; }
     public readonly Hand Hand = new();
     
-    private readonly Stats _stats = new(Game.Settings.StartingMaxHealth, Game.Settings.StartingDamageMultiplier);
+    public readonly Stats Stats = new(Game.Settings.StartingMaxHealth, Game.Settings.StartingDamageMultiplier);
     private readonly Color _borderColor = Color.Green;
 
     public enum ActionChoice
@@ -27,12 +27,12 @@ public class Player
         var revealCards = true;
         
         Display.DisplayPlayerPanel(
-            Hand, _stats,
+            Hand, Stats,
             name,
             phrase,
             _borderColor,
-            TextColorName,
-            revealCards);
+            revealCards,
+            IsStanding);
     }
     
     public ActionChoice PromptActionChoice()

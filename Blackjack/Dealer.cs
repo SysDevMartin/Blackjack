@@ -9,12 +9,12 @@ public class Dealer
     private const int StandWhenReachingSumLeftToTarget = 4;
     private const int PercentageChanceToIgnoreSumWhenBelowTarget = 50;
     private const int SumLeftToTargetForIgnoreChance = 3;
-    private const string TextColorName = "red";
+    //private const string TextColorName = "red";
     
     public bool IsStanding { get; set; }
     public readonly Hand Hand = new();
     
-    private readonly Stats _stats = new(Game.Settings.StartingMaxHealth, Game.Settings.StartingDamageMultiplier);
+    public readonly Stats Stats = new(Game.Settings.StartingMaxHealth, Game.Settings.StartingDamageMultiplier);
     private readonly Color _borderColor = Color.Red;
     private readonly Random _randomNumberGenerator = new();
 
@@ -183,12 +183,12 @@ public class Dealer
         
         Display.DisplayPlayerPanel(
             Hand,
-            _stats,
+            Stats,
             name,
             phrase,
             _borderColor,
-            TextColorName,
-            revealCards);
+            revealCards,
+            IsStanding);
     }
 
     private void MakeTurnDecision()

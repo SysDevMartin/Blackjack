@@ -13,7 +13,7 @@ public class Game
         public const int MinCardValue = 1;
         public const int MaxCardValue = 10;
         public const int StartingMaxHealth = 1000;
-        public const float StartingDamageMultiplier = 1.0f;
+        public const int StartingDamageMultiplier = 1;
     }
     
     public enum GameState
@@ -108,11 +108,11 @@ public class Game
         
         if (playerWins)
         {
-            AnsiConsole.MarkupLine("[bold][green]You win![/][/]");
+            AnsiConsole.MarkupLine("[bold][green]You win the round![/][/]");
         }
         else if (dealerWins)
         {
-            AnsiConsole.MarkupLine("[bold][red]Dealer wins![/][/]");
+            AnsiConsole.MarkupLine("[bold][red]Dealer wins the round![/][/]");
         }
         else
         {
@@ -120,6 +120,34 @@ public class Game
         }
         
         AnsiConsole.MarkupLine($"[darkgoldenrod]You have [bold]{playerCardSum}[/] and dealer has [bold]{dealerCardSum}[/][/].");
+        AnsiConsole.WriteLine("");
+        
+        if (playerWins)
+        {
+            var playerDamage = player.Stats.GetDamage(playerCardSum);
+            var isDead = dealer.Stats.TakeDamage(playerDamage);
+            
+            var previousDamageMultiplier = player.Stats.DamageMultiplier;
+            AnsiConsole.MarkupLine($"[green]Dealer takes {playerDamage} damage and has {dealer.Stats.CurrentHealth} health left.[/]");
+            
+            player.Stats.IncreaseDamageMultiplier();
+            AnsiConsole.MarkupLine($"Your damage multiplier increased ({previousDamageMultiplier}x --> [bold]{player.Stats.DamageMultiplier}x[/]).");
+        }
+        else if (dealerWins)
+        {
+            var dealerDamage = dealer.Stats.GetDamage(dealerCardSum);
+            var isDead = player.Stats.TakeDamage(dealerDamage);
+            
+            var previousDamageMultiplier = dealer.Stats.DamageMultiplier;
+            AnsiConsole.MarkupLine($"[red]You take {dealerDamage} damage and have {player.Stats.CurrentHealth} health left.[/]");
+            
+            dealer.Stats.IncreaseDamageMultiplier();
+            AnsiConsole.MarkupLine($"Dealer's damage multiplier increased ({previousDamageMultiplier}x --> [bold]{dealer.Stats.DamageMultiplier}x[/]).");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine("[yellow]No one takes damage.[/]");
+        }
     }
 
     private void PerformGameState(ref string gameMessageMarkupText, Player player, Dealer dealer)
