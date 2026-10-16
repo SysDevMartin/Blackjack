@@ -6,8 +6,7 @@ public static class Menu
 {
     public enum MenuChoice
     {
-        PlayAgain,
-        QuitGame,
+        Continue,
         None
     }
     
@@ -17,21 +16,16 @@ public static class Menu
             
         string[] availableChoices =
         {
-            "[bold][chartreuse3]Play Again[/][/]",
-            "[bold][red]Quit[/][/]"
+            "[bold][chartreuse3]Continue[/][/]"
         };
             
         var selectedMenuItem = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title("[bold]Play again?[/]")
-                .AddChoices(availableChoices));
+            new SelectionPrompt<string>().AddChoices(availableChoices));
             
         switch (selectedMenuItem)
         {
-            case "[bold][chartreuse3]Play Again[/][/]":
-                return MenuChoice.PlayAgain;
-            case "[bold][red]Quit[/][/]":
-                return MenuChoice.QuitGame;
+            case "[bold][chartreuse3]Continue[/][/]":
+                return MenuChoice.Continue;
         }
 
         return MenuChoice.None;

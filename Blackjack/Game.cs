@@ -32,7 +32,7 @@ public class Game
     public static GameState CurrentGameState;
     public static Turn CurrentTurn;
     
-    private void Initialize(Player player, Dealer dealer)
+    private void InitializeNewRound(Player player, Dealer dealer)
     {
         CurrentGameState = GameState.Play;
         CurrentTurn = Turn.Player;
@@ -128,7 +128,7 @@ public class Game
             var isDead = dealer.Stats.TakeDamage(playerDamage);
             
             var previousDamageMultiplier = player.Stats.DamageMultiplier;
-            AnsiConsole.MarkupLine($"[green]Dealer takes {playerDamage} damage and has {dealer.Stats.CurrentHealth} health left.[/]");
+            AnsiConsole.MarkupLine($"[green]Dealer takes [bold]{playerDamage}[/] damage and has [bold]{dealer.Stats.CurrentHealth}[/] health left.[/]");
             
             player.Stats.IncreaseDamageMultiplier();
             AnsiConsole.MarkupLine($"Your damage multiplier increased ({previousDamageMultiplier}x --> [bold]{player.Stats.DamageMultiplier}x[/]).");
@@ -139,7 +139,7 @@ public class Game
             var isDead = player.Stats.TakeDamage(dealerDamage);
             
             var previousDamageMultiplier = dealer.Stats.DamageMultiplier;
-            AnsiConsole.MarkupLine($"[red]You take {dealerDamage} damage and have {player.Stats.CurrentHealth} health left.[/]");
+            AnsiConsole.MarkupLine($"[red]You take [bold]{dealerDamage}[/] damage and have [bold]{player.Stats.CurrentHealth}[/] health left.[/]");
             
             dealer.Stats.IncreaseDamageMultiplier();
             AnsiConsole.MarkupLine($"Dealer's damage multiplier increased ({previousDamageMultiplier}x --> [bold]{dealer.Stats.DamageMultiplier}x[/]).");
@@ -171,12 +171,8 @@ public class Game
                 var menuChoice = Menu.PromptGameChoice();
                 switch (menuChoice)
                 {
-                    case Menu.MenuChoice.PlayAgain:
-                        Initialize(player, dealer);
-                        break;
-                    
-                    case Menu.MenuChoice.QuitGame:
-                        CurrentGameState = GameState.Quit;
+                    case Menu.MenuChoice.Continue:
+                        InitializeNewRound(player, dealer);
                         break;
                 }
                 break;
@@ -189,7 +185,7 @@ public class Game
         var player = new Player();
         var gameMessageMarkupText = "";
         
-        Initialize(player, dealer);
+        InitializeNewRound(player, dealer);
         
         while (CurrentGameState != GameState.Quit)
         {
